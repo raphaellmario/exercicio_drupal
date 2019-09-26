@@ -34,14 +34,18 @@
         $passwordInputParentWrapper
           .find('input.js-password-confirm')
           .parent()
-          .append(Drupal.theme('passwordConfirmMessage', translate))
+          .append(
+            `<div aria-live="polite" aria-atomic="true" class="password-confirm js-password-confirm">${
+              translate.confirmTitle
+            } <span></span></div>`,
+          )
           .addClass('confirm-parent');
 
         const $confirmInput = $passwordInputParentWrapper.find(
           'input.js-password-confirm',
         );
         const $confirmResult = $passwordInputParentWrapper.find(
-          'div.js-password-confirm-message',
+          'div.js-password-confirm',
         );
         const $confirmChild = $confirmResult.find('span');
 

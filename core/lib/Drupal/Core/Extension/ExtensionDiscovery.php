@@ -228,7 +228,7 @@ class ExtensionDiscovery {
    */
   public function setProfileDirectoriesFromSettings() {
     $this->profileDirectories = [];
-    $profile = \Drupal::installProfile();
+    $profile = drupal_get_profile();
     // For SimpleTest to be able to test modules packaged together with a
     // distribution we need to include the profile of the parent site (in
     // which test runs are triggered).

@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\search\Functional;
 
-use Drupal\Core\Database\Database;
 use Drupal\Tests\BrowserTestBase;
 
 /**
@@ -91,8 +90,7 @@ class SearchNodeUpdateAndDeletionTest extends BrowserTestBase {
     $this->assertText($node->label());
 
     // Get the node info from the search index tables.
-    $connection = Database::getConnection();
-    $search_index_dataset = $connection->query("SELECT sid FROM {search_index} WHERE type = 'node_search' AND  word = :word", [':word' => 'dragons'])
+    $search_index_dataset = db_query("SELECT sid FROM {search_index} WHERE type = 'node_search' AND  word = :word", [':word' => 'dragons'])
       ->fetchField();
     $this->assertNotEqual($search_index_dataset, FALSE, t('Node info found on the search_index'));
 
@@ -100,7 +98,7 @@ class SearchNodeUpdateAndDeletionTest extends BrowserTestBase {
     $node->delete();
 
     // Check if the node info is gone from the search table.
-    $search_index_dataset = $connection->query("SELECT sid FROM {search_index} WHERE type = 'node_search' AND  word = :word", [':word' => 'dragons'])
+    $search_index_dataset = db_query("SELECT sid FROM {search_index} WHERE type = 'node_search' AND  word = :word", [':word' => 'dragons'])
       ->fetchField();
     $this->assertFalse($search_index_dataset, t('Node info successfully removed from search_index'));
 

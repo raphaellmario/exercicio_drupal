@@ -586,7 +586,7 @@ class UrlHelperTest extends TestCase {
       $this->expectException(\InvalidArgumentException::class);
     }
     else {
-      $this->expectException(\InvalidArgumentException::class);
+      $this->setExpectedException(\InvalidArgumentException::class);
     }
     UrlHelper::externalIsLocal($url, $base_url);
   }

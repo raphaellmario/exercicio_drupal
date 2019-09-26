@@ -93,7 +93,7 @@ class MediaSourceOEmbedVideoTest extends MediaSourceTestBase {
 
     // Configure the iframe to be narrower than the actual video, so we can
     // verify that the video scales correctly.
-    $display = \Drupal::service('entity_display.repository')->getViewDisplay('media', $media_type_id);
+    $display = entity_get_display('media', $media_type_id, 'default');
     $this->assertFalse($display->isNew());
     $component = $display->getComponent('field_media_oembed_video');
     $this->assertInternalType('array', $component);
@@ -174,7 +174,7 @@ class MediaSourceOEmbedVideoTest extends MediaSourceTestBase {
     $this->assertNoRaw('core/modules/media/templates/media-oembed-iframe.html.twig');
 
     // Test themes not inheriting from stable.
-    \Drupal::service('theme_installer')->install(['stark']);
+    \Drupal::service('theme_handler')->install(['stark']);
     $this->config('system.theme')->set('default', 'stark')->save();
     $this->drupalGet('media/oembed', ['query' => $query]);
     $assert_session->pageTextContains('By the power of Greyskull, Vimeo works!');

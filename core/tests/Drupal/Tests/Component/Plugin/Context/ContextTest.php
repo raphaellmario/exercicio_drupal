@@ -76,8 +76,10 @@ class ContextTest extends TestCase {
           $this->expectExceptionMessage(sprintf("The %s context is required and not present.", $data_type));
         }
         else {
-          $this->expectException('Drupal\Component\Plugin\Exception\ContextException');
-          $this->expectExceptionMessage(sprintf("The %s context is required and not present.", $data_type));
+          $this->setExpectedException(
+            'Drupal\Component\Plugin\Exception\ContextException',
+            sprintf("The %s context is required and not present.", $data_type)
+          );
         }
       }
 

@@ -123,8 +123,7 @@ class Workspace extends ContentEntityBase implements WorkspaceInterface {
    * {@inheritdoc}
    */
   public function isDefaultWorkspace() {
-    @trigger_error('WorkspaceInterface::isDefaultWorkspace() is deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use \Drupal\workspaces\WorkspaceManager::hasActiveWorkspace() instead. See https://www.drupal.org/node/3071527', E_USER_DEPRECATED);
-    return FALSE;
+    return $this->id() === static::DEFAULT_WORKSPACE;
   }
 
   /**
@@ -151,6 +150,7 @@ class Workspace extends ContentEntityBase implements WorkspaceInterface {
     // be purged on cron.
     $state = \Drupal::state();
     $deleted_workspace_ids = $state->get('workspace.deleted', []);
+    unset($entities[static::DEFAULT_WORKSPACE]);
     $deleted_workspace_ids += array_combine(array_keys($entities), array_keys($entities));
     $state->set('workspace.deleted', $deleted_workspace_ids);
 

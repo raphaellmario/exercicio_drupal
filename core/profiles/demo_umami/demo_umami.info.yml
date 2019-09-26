@@ -48,6 +48,7 @@ install:
   - locale
   - config_translation
   - content_translation
+  - demo_umami_tour
 themes:
   - seven
   - umami

@@ -136,11 +136,14 @@ abstract class ResourceTestBase extends BrowserTestBase {
   protected static $secondCreatedEntityId = 3;
 
   /**
-   * Specify which field is the 'label' field for testing a POST edge case.
+   * Optionally specify which field is the 'label' field.
+   *
+   * Some entities specify a 'label_callback', but not a 'label' entity key.
+   * For example: User.
    *
    * @var string|null
    *
-   * @see ::testPostIndividual()
+   * @see ::getInvalidNormalizedEntityToCreate()
    */
   protected static $labelFieldName = NULL;
 
@@ -374,9 +377,6 @@ abstract class ResourceTestBase extends BrowserTestBase {
    *   The JSON:API normalization for the given entity.
    */
   protected function normalize(EntityInterface $entity, Url $url) {
-    // Don't use cached normalizations in tests.
-    $this->container->get('cache.jsonapi_normalizations')->deleteAll();
-
     $self_link = new Link(new CacheableMetadata(), $url, ['self']);
     $resource_type = $this->container->get('jsonapi.resource_type.repository')->getByTypeName(static::$resourceTypeName);
     $doc = new JsonApiDocumentTopLevel(new ResourceObjectData([ResourceObject::createFromEntity($resource_type, $entity)], 1), new NullIncludedData(), new LinkCollection(['self' => $self_link]));
@@ -908,7 +908,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
     // - to eventually result in a well-formed request that succeeds.
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
     $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()]);
-    // $url = $this->entity->toUrl('jsonapi');
+    /* $url = $this->entity->toUrl('jsonapi'); */
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
@@ -1880,9 +1880,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $parseable_valid_request_body = Json::encode($this->getPostDocument());
     /* $parseable_valid_request_body_2 = Json::encode($this->getNormalizedPostEntity()); */
     $parseable_invalid_request_body_missing_type = Json::encode($this->removeResourceTypeFromDocument($this->getPostDocument(), 'type'));
-    if ($this->entity->getEntityType()->hasKey('label')) {
-      $parseable_invalid_request_body = Json::encode($this->makeNormalizationInvalid($this->getPostDocument(), 'label'));
-    }
+    $parseable_invalid_request_body = Json::encode($this->makeNormalizationInvalid($this->getPostDocument(), 'label'));
     $parseable_invalid_request_body_2 = Json::encode(NestedArray::mergeDeep(['data' => ['id' => $this->randomMachineName(129)]], $this->getPostDocument()));
     $parseable_invalid_request_body_3 = Json::encode(NestedArray::mergeDeep(['data' => ['attributes' => ['field_rest_test' => $this->randomString()]]], $this->getPostDocument()));
     $parseable_invalid_request_body_4 = Json::encode(NestedArray::mergeDeep(['data' => ['attributes' => ['field_nonexistent' => $this->randomString()]]], $this->getPostDocument()));
@@ -1938,14 +1936,13 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $response = $this->request('POST', $url, $request_options);
     $this->assertResourceErrorResponse(400, 'Resource object must include a "type".', $url, $response, FALSE);
 
-    if ($this->entity->getEntityType()->hasKey('label')) {
-      $request_options[RequestOptions::BODY] = $parseable_invalid_request_body;
-      // DX: 422 when invalid entity: multiple values sent for single-value field.
-      $response = $this->request('POST', $url, $request_options);
-      $label_field = $this->entity->getEntityType()->getKey('label');
-      $label_field_capitalized = $this->entity->getFieldDefinition($label_field)->getLabel();
-      $this->assertResourceErrorResponse(422, "$label_field: $label_field_capitalized: this field cannot hold more than 1 values.", NULL, $response, '/data/attributes/' . $label_field);
-    }
+    $request_options[RequestOptions::BODY] = $parseable_invalid_request_body;
+
+    // DX: 422 when invalid entity: multiple values sent for single-value field.
+    $response = $this->request('POST', $url, $request_options);
+    $label_field = $this->entity->getEntityType()->hasKey('label') ? $this->entity->getEntityType()->getKey('label') : static::$labelFieldName;
+    $label_field_capitalized = $this->entity->getFieldDefinition($label_field)->getLabel();
+    $this->assertResourceErrorResponse(422, "$label_field: $label_field_capitalized: this field cannot hold more than 1 values.", NULL, $response, '/data/attributes/' . $label_field);
 
     $request_options[RequestOptions::BODY] = $parseable_invalid_request_body_2;
 
@@ -2050,7 +2047,6 @@ abstract class ResourceTestBase extends BrowserTestBase {
       // 500 when creating an entity with a duplicate UUID.
       $doc = $this->getModifiedEntityForPostTesting();
       $doc['data']['id'] = $uuid;
-      $label_field = $this->entity->getEntityType()->hasKey('label') ? $this->entity->getEntityType()->getKey('label') : static::$labelFieldName;
       $doc['data']['attributes'][$label_field] = [['value' => $this->randomMachineName()]];
       $request_options[RequestOptions::BODY] = Json::encode($doc);
 
@@ -2114,7 +2110,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
     // - to eventually result in a well-formed request that succeeds.
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
     $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()]);
-    // $url = $this->entity->toUrl('jsonapi');
+    /* $url = $this->entity->toUrl('jsonapi'); */
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
@@ -2149,14 +2145,13 @@ abstract class ResourceTestBase extends BrowserTestBase {
     $response = $this->request('PATCH', $url, $request_options);
     $this->assertResourceErrorResponse(400, 'Syntax error', $url, $response, FALSE);
 
+    $request_options[RequestOptions::BODY] = $parseable_invalid_request_body;
+
     // DX: 422 when invalid entity: multiple values sent for single-value field.
-    if ($this->entity->getEntityType()->hasKey('label')) {
-      $request_options[RequestOptions::BODY] = $parseable_invalid_request_body;
-      $response = $this->request('PATCH', $url, $request_options);
-      $label_field = $this->entity->getEntityType()->getKey('label');
-      $label_field_capitalized = $this->entity->getFieldDefinition($label_field)->getLabel();
-      $this->assertResourceErrorResponse(422, "$label_field: $label_field_capitalized: this field cannot hold more than 1 values.", NULL, $response, '/data/attributes/' . $label_field);
-    }
+    $response = $this->request('PATCH', $url, $request_options);
+    $label_field = $this->entity->getEntityType()->hasKey('label') ? $this->entity->getEntityType()->getKey('label') : static::$labelFieldName;
+    $label_field_capitalized = $this->entity->getFieldDefinition($label_field)->getLabel();
+    $this->assertResourceErrorResponse(422, "$label_field: $label_field_capitalized: this field cannot hold more than 1 values.", NULL, $response, '/data/attributes/' . $label_field);
 
     $request_options[RequestOptions::BODY] = $parseable_invalid_request_body_2;
 
@@ -2408,7 +2403,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
     // - to eventually result in a well-formed request that succeeds.
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
     $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()]);
-    // $url = $this->entity->toUrl('jsonapi');
+    /* $url = $this->entity->toUrl('jsonapi'); */
     $request_options = [];
     $request_options[RequestOptions::HEADERS]['Accept'] = 'application/vnd.api+json';
     $request_options = NestedArray::mergeDeep($request_options, $this->getAuthenticationRequestOptions());
@@ -2728,7 +2723,7 @@ abstract class ResourceTestBase extends BrowserTestBase {
 
     // @todo Remove line below in favor of commented line in https://www.drupal.org/project/jsonapi/issues/2878463.
     $url = Url::fromRoute(sprintf('jsonapi.%s.individual', static::$resourceTypeName), ['entity' => $this->entity->uuid()])->setAbsolute();
-    // $url = $this->entity->toUrl('jsonapi');
+    /* $url = $this->entity->toUrl('jsonapi'); */
     $collection_url = Url::fromRoute(sprintf('jsonapi.%s.collection', static::$resourceTypeName))->setAbsolute();
     $relationship_url = Url::fromRoute(sprintf('jsonapi.%s.%s.relationship.get', static::$resourceTypeName, 'field_jsonapi_test_entity_ref'), ['entity' => $this->entity->uuid()])->setAbsolute();
     $related_url = Url::fromRoute(sprintf('jsonapi.%s.%s.related', static::$resourceTypeName, 'field_jsonapi_test_entity_ref'), ['entity' => $this->entity->uuid()])->setAbsolute();

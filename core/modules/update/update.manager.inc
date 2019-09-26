@@ -144,16 +144,13 @@ function _update_manager_check_backends(&$form, $operation) {
  * @param string $directory
  *   The directory you wish to extract the archive into.
  *
- * @return \Drupal\Core\Archiver\ArchiverInterface
+ * @return Archiver
  *   The Archiver object used to extract the archive.
  *
  * @throws Exception
  */
 function update_manager_archive_extract($file, $directory) {
-  /** @var \Drupal\Core\Archiver\ArchiverInterface $archiver */
-  $archiver = \Drupal::service('plugin.manager.archiver')->getInstance([
-    'filepath' => $file,
-  ]);
+  $archiver = archiver_get_archiver($file);
   if (!$archiver) {
     throw new Exception(t('Cannot extract %file, not a valid archive.', ['%file' => $file]));
   }
@@ -312,7 +309,6 @@ function update_manager_batch_project_get($project, $url, &$context) {
  * @see install_check_requirements()
  */
 function update_manager_local_transfers_allowed() {
-  $file_system = \Drupal::service('file_system');
   // Compare the owner of a webserver-created temporary file to the owner of
   // the configuration directory to determine if local transfers will be
   // allowed.
@@ -322,7 +318,7 @@ function update_manager_local_transfers_allowed() {
 
   // Clean up. If this fails, we can ignore it (since this is just a temporary
   // file anyway).
-  @$file_system->unlink($temporary_file);
+  @drupal_unlink($temporary_file);
 
   return $local_transfers_allowed;
 }

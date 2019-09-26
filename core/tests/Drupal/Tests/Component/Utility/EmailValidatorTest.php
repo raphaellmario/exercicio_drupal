@@ -37,8 +37,7 @@ class EmailValidatorTest extends TestCase {
       $this->expectExceptionMessage('Calling \Drupal\Component\Utility\EmailValidator::isValid() with the second argument is not supported. See https://www.drupal.org/node/2997196');
     }
     else {
-      $this->expectException(\BadMethodCallException::class);
-      $this->expectExceptionMessage('Calling \Drupal\Component\Utility\EmailValidator::isValid() with the second argument is not supported. See https://www.drupal.org/node/2997196');
+      $this->setExpectedException(\BadMethodCallException::class, 'Calling \Drupal\Component\Utility\EmailValidator::isValid() with the second argument is not supported. See https://www.drupal.org/node/2997196');
     }
     $validator->isValid('example@example.com', (new RFCValidation()));
   }

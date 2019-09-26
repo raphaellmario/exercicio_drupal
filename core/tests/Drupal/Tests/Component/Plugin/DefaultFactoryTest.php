@@ -55,8 +55,7 @@ class DefaultFactoryTest extends TestCase {
       $this->expectExceptionMessage('The plugin (corn) did not specify an instance class.');
     }
     else {
-      $this->expectException(PluginException::class);
-      $this->expectExceptionMessage('The plugin (corn) did not specify an instance class.');
+      $this->setExpectedException(PluginException::class, 'The plugin (corn) did not specify an instance class.');
     }
     DefaultFactory::getPluginClass('corn', []);
   }
@@ -73,8 +72,7 @@ class DefaultFactoryTest extends TestCase {
       $this->expectExceptionMessage('The plugin (corn) did not specify an instance class.');
     }
     else {
-      $this->expectException(PluginException::class);
-      $this->expectExceptionMessage('The plugin (corn) did not specify an instance class.');
+      $this->setExpectedException(PluginException::class, 'The plugin (corn) did not specify an instance class.');
     }
     DefaultFactory::getPluginClass('corn', $plugin_definition);
   }
@@ -90,8 +88,7 @@ class DefaultFactoryTest extends TestCase {
       $this->expectExceptionMessage('Plugin (carrot) instance class "Drupal\Tests\Component\Plugin\Fixtures\vegetable\Carrot" does not exist.');
     }
     else {
-      $this->expectException(PluginException::class);
-      $this->expectExceptionMessage('Plugin (carrot) instance class "Drupal\Tests\Component\Plugin\Fixtures\vegetable\Carrot" does not exist.');
+      $this->setExpectedException(PluginException::class, 'Plugin (carrot) instance class "Drupal\Tests\Component\Plugin\Fixtures\vegetable\Carrot" does not exist.');
     }
     DefaultFactory::getPluginClass('carrot', ['class' => 'Drupal\Tests\Component\Plugin\Fixtures\vegetable\Carrot']);
   }
@@ -111,7 +108,7 @@ class DefaultFactoryTest extends TestCase {
       $this->expectException(PluginException::class);
     }
     else {
-      $this->expectException(PluginException::class);
+      $this->setExpectedException(PluginException::class);
     }
     DefaultFactory::getPluginClass('carrot', $plugin_definition);
   }
@@ -155,8 +152,7 @@ class DefaultFactoryTest extends TestCase {
       $this->expectExceptionMessage('Plugin "corn" (Drupal\Tests\Component\Plugin\Fixtures\vegetable\Broccoli) must implement interface Drupal\Tests\Component\Plugin\Fixtures\vegetable\VegetableInterface.');
     }
     else {
-      $this->expectException(PluginException::class);
-      $this->expectExceptionMessage('Plugin "corn" (Drupal\Tests\Component\Plugin\Fixtures\vegetable\Broccoli) must implement interface Drupal\Tests\Component\Plugin\Fixtures\vegetable\VegetableInterface.');
+      $this->setExpectedException(PluginException::class, 'Plugin "corn" (Drupal\Tests\Component\Plugin\Fixtures\vegetable\Broccoli) must implement interface Drupal\Tests\Component\Plugin\Fixtures\vegetable\VegetableInterface.');
     }
     DefaultFactory::getPluginClass('corn', ['class' => Broccoli::class], VegetableInterface::class);
   }
@@ -176,7 +172,7 @@ class DefaultFactoryTest extends TestCase {
       $this->expectException(PluginException::class);
     }
     else {
-      $this->expectException(PluginException::class);
+      $this->setExpectedException(PluginException::class);
     }
     DefaultFactory::getPluginClass('corn', $plugin_definition, VegetableInterface::class);
   }

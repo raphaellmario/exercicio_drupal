@@ -413,7 +413,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
   Drupal.Ajax.prototype.setProgressIndicatorFullscreen = function () {
     this.progress.element = $(Drupal.theme('ajaxProgressIndicatorFullscreen'));
-    $('body').append(this.progress.element);
+    $('body').after(this.progress.element);
   };
 
   Drupal.Ajax.prototype.success = function (response, status) {

@@ -948,7 +948,7 @@
    */
   Drupal.Ajax.prototype.setProgressIndicatorFullscreen = function() {
     this.progress.element = $(Drupal.theme('ajaxProgressIndicatorFullscreen'));
-    $('body').append(this.progress.element);
+    $('body').after(this.progress.element);
   };
 
   /**

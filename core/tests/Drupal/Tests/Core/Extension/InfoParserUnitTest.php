@@ -72,8 +72,7 @@ BROKEN_INFO;
       ],
     ]);
     $filename = vfsStream::url('modules/fixtures/broken.info.txt');
-    $this->expectException('\Drupal\Core\Extension\InfoParserException');
-    $this->expectExceptionMessage('broken.info.txt');
+    $this->setExpectedException('\Drupal\Core\Extension\InfoParserException', 'broken.info.txt');
     $this->infoParser->parse($filename);
   }
 
@@ -328,15 +327,14 @@ MISSINGKEY;
         'missing_key-duplicate.info.txt' => $missing_key,
       ],
     ]);
-    // Set the expected exception for the 2nd call to parse().
-    $this->expectException(InfoParserException::class);
-    $this->expectExceptionMessage('Missing required keys (type) in vfs://modules/fixtures/missing_key-duplicate.info.txt');
     try {
       $this->infoParser->parse(vfsStream::url('modules/fixtures/missing_key.info.txt'));
     }
     catch (InfoParserException $exception) {
       $this->assertSame('Missing required keys (type) in vfs://modules/fixtures/missing_key.info.txt', $exception->getMessage());
 
+      $this->expectException('\Drupal\Core\Extension\InfoParserException');
+      $this->expectExceptionMessage('Missing required keys (type) in vfs://modules/fixtures/missing_key-duplicate.info.txt');
       $this->infoParser->parse(vfsStream::url('modules/fixtures/missing_key-duplicate.info.txt'));
     }
 
@@ -429,11 +427,6 @@ CORE_INCOMPATIBILITY;
         'previous_major_next_major',
         "^1 || ^$next_major",
         TRUE,
-      ],
-      'current_minor' => [
-        'current_minor',
-        "~$major.$minor",
-        FALSE,
       ],
     ];
   }

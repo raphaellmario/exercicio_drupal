@@ -133,10 +133,9 @@ function search_preprocess_block(&$variables) {
  *   (optional) The plugin ID or other machine-readable type for the items to
  *   remove from the search index. If omitted, $sid and $langcode are ignored
  *   and the entire search index is cleared.
- * @param int|array|null $sid
- *   (optional) The ID or array of IDs of the items to remove from the search
- *   index. If omitted, all items matching $type are cleared, and $langcode
- *   is ignored.
+ * @param string|null $sid
+ *   (optional) The ID of the items to remove from the search index. If
+ *   omitted, all items matching $type are cleared, and $langcode is ignored.
  * @param string|null $langcode
  *   (optional) Language code of the item to remove from the search index. If
  *   omitted, all items matching $sid and $type are cleared.
@@ -215,11 +214,10 @@ function search_cron() {
  */
 function search_update_totals() {
   $connection = \Drupal::database();
-  $replica = \Drupal::service('database.replica');
   // Update word IDF (Inverse Document Frequency) counts for new/changed words.
   foreach (search_dirty() as $word => $dummy) {
     // Get total count
-    $total = $replica->query("SELECT SUM(score) FROM {search_index} WHERE word = :word", [':word' => $word])->fetchField();
+    $total = db_query("SELECT SUM(score) FROM {search_index} WHERE word = :word", [':word' => $word], ['target' => 'replica'])->fetchField();
     // Apply Zipf's law to equalize the probability distribution.
     $total = log10(1 + 1 / (max(1, $total)));
     $connection->merge('search_total')
@@ -230,7 +228,7 @@ function search_update_totals() {
   // Find words that were deleted from search_index, but are still in
   // search_total. We use a LEFT JOIN between the two tables and keep only the
   // rows which fail to join.
-  $result = $replica->query("SELECT t.word AS realword, i.word FROM {search_total} t LEFT JOIN {search_index} i ON t.word = i.word WHERE i.word IS NULL");
+  $result = db_query("SELECT t.word AS realword, i.word FROM {search_total} t LEFT JOIN {search_index} i ON t.word = i.word WHERE i.word IS NULL", [], ['target' => 'replica']);
   $or = new Condition('OR');
   foreach ($result as $word) {
     $or->condition('word', $word->realword);

@@ -366,7 +366,7 @@ class MediaAccessTest extends MediaFunctionalTestBase {
     ]);
     $media_parent->save();
 
-    \Drupal::service('entity_display.repository')->getViewDisplay('media', $media_type->id(), 'full')
+    entity_get_display('media', $media_type->id(), 'full')
       ->set('content', [])
       ->setComponent('title', ['type' => 'string'])
       ->setComponent('field_reference', [

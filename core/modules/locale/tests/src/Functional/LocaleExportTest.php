@@ -41,16 +41,15 @@ class LocaleExportTest extends BrowserTestBase {
    * Test exportation of translations.
    */
   public function testExportTranslation() {
-    $file_system = \Drupal::service('file_system');
     // First import some known translations.
     // This will also automatically add the 'fr' language.
-    $name = $file_system->tempnam('temporary://', "po_") . '.po';
+    $name = \Drupal::service('file_system')->tempnam('temporary://', "po_") . '.po';
     file_put_contents($name, $this->getPoFile());
     $this->drupalPostForm('admin/config/regional/translate/import', [
       'langcode' => 'fr',
       'files[file]' => $name,
     ], t('Import'));
-    $file_system->unlink($name);
+    drupal_unlink($name);
 
     // Get the French translations.
     $this->drupalPostForm('admin/config/regional/translate/export', [
@@ -63,14 +62,14 @@ class LocaleExportTest extends BrowserTestBase {
     $this->assertRaw('msgstr "lundi"', 'French translations present in exported file.');
 
     // Import some more French translations which will be marked as customized.
-    $name = $file_system->tempnam('temporary://', "po2_") . '.po';
+    $name = \Drupal::service('file_system')->tempnam('temporary://', "po2_") . '.po';
     file_put_contents($name, $this->getCustomPoFile());
     $this->drupalPostForm('admin/config/regional/translate/import', [
       'langcode' => 'fr',
       'files[file]' => $name,
       'customized' => 1,
     ], t('Import'));
-    $file_system->unlink($name);
+    drupal_unlink($name);
 
     // Create string without translation in the locales_source table.
     $this->container

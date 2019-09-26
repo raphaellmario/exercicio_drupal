@@ -49,9 +49,7 @@ class HttpExceptionNormalizer extends NormalizerBase {
    * {@inheritdoc}
    */
   public function normalize($object, $format = NULL, array $context = []) {
-    $cacheability = new CacheableMetadata();
-    $cacheability->addCacheableDependency($object);
-    return new HttpExceptionNormalizerValue($cacheability, static::rasterizeValueRecursive($this->buildErrorObjects($object)));
+    return new HttpExceptionNormalizerValue(new CacheableMetadata(), static::rasterizeValueRecursive($this->buildErrorObjects($object)));
   }
 
   /**

@@ -92,8 +92,7 @@ class DateTimePlusTest extends TestCase {
       $this->expectExceptionMessage('Method Drupal\Component\Datetime\DateTimePlus::diff expects parameter 1 to be a \DateTime or \Drupal\Component\Datetime\DateTimePlus object');
     }
     else {
-      $this->expectException(\BadMethodCallException::class);
-      $this->expectExceptionMessage('Method Drupal\Component\Datetime\DateTimePlus::diff expects parameter 1 to be a \DateTime or \Drupal\Component\Datetime\DateTimePlus object');
+      $this->setExpectedException(\BadMethodCallException::class, 'Method Drupal\Component\Datetime\DateTimePlus::diff expects parameter 1 to be a \DateTime or \Drupal\Component\Datetime\DateTimePlus object');
     }
     $interval = $input1->diff($input2, $absolute);
   }
@@ -115,7 +114,7 @@ class DateTimePlusTest extends TestCase {
       $this->expectException($class);
     }
     else {
-      $this->expectException($class);
+      $this->setExpectedException($class);
     }
     $this->assertInstanceOf(
       '\Drupal\Component\DateTimePlus',
@@ -258,7 +257,7 @@ class DateTimePlusTest extends TestCase {
       $this->expectException($class);
     }
     else {
-      $this->expectException($class);
+      $this->setExpectedException($class);
     }
     DateTimePlus::createFromFormat($format, $input, $timezone);
   }
@@ -330,9 +329,11 @@ class DateTimePlusTest extends TestCase {
     if (PHP_INT_SIZE > 4) {
       // Create a date object in the distant past.
       // @see https://www.drupal.org/node/2795489#comment-12127088
-      // Note that this date is after the United States standardized its
-      // timezones.
-      $dates[] = ['1883-11-19 10:30', 'America/Chicago', '1883-11-19T10:30:00-06:00'];
+      if (version_compare(PHP_VERSION, '5.6.15', '>=')) {
+        // Note that this date is after the United States standardized its
+        // timezones.
+        $dates[] = ['1883-11-19 10:30', 'America/Chicago', '1883-11-19T10:30:00-06:00'];
+      }
       // Create a date object in the far future.
       $dates[] = ['2345-01-02 02:04', 'UTC', '2345-01-02T02:04:00+00:00'];
     }
@@ -366,9 +367,11 @@ class DateTimePlusTest extends TestCase {
     if (PHP_INT_SIZE > 4) {
       // Create a date object in the distant past.
       // @see https://www.drupal.org/node/2795489#comment-12127088
-      // Note that this date is after the United States standardized its
-      // timezones.
-      $dates[] = [['year' => 1883, 'month' => 11, 'day' => 19], 'America/Chicago', '1883-11-19T00:00:00-06:00'];
+      if (version_compare(PHP_VERSION, '5.6.15', '>=')) {
+        // Note that this date is after the United States standardized its
+        // timezones.
+        $dates[] = [['year' => 1883, 'month' => 11, 'day' => 19], 'America/Chicago', '1883-11-19T00:00:00-06:00'];
+      }
       // Create a date object in the far future.
       $dates[] = [['year' => 2345, 'month' => 1, 'day' => 2], 'UTC', '2345-01-02T00:00:00+00:00'];
     }
@@ -821,7 +824,7 @@ class DateTimePlusTest extends TestCase {
       $this->expectException(\UnexpectedValueException::class);
     }
     else {
-      $this->expectException(\UnexpectedValueException::class);
+      $this->setExpectedException(\UnexpectedValueException::class);
     }
     $date = DateTimePlus::createFromFormat('Y-m-d H:i:s', '11-03-31 17:44:00', 'UTC', ['validate_format' => TRUE]);
   }
@@ -886,8 +889,7 @@ class DateTimePlusTest extends TestCase {
       $this->expectExceptionMessage('Call to undefined method Drupal\Component\Datetime\DateTimePlus::nonexistent()');
     }
     else {
-      $this->expectException(\BadMethodCallException::class);
-      $this->expectExceptionMessage('Call to undefined method Drupal\Component\Datetime\DateTimePlus::nonexistent()');
+      $this->setExpectedException(\BadMethodCallException::class, 'Call to undefined method Drupal\Component\Datetime\DateTimePlus::nonexistent()');
     }
     $date = new DateTimePlus('now', 'Australia/Sydney');
     $date->setTimezone(new \DateTimeZone('America/New_York'))->nonexistent();

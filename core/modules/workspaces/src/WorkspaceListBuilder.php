@@ -75,7 +75,7 @@ class WorkspaceListBuilder extends EntityListBuilder {
     $row['data'] = $row['data'] + parent::buildRow($entity);
 
     $active_workspace = $this->workspaceManager->getActiveWorkspace();
-    if ($active_workspace && $entity->id() === $active_workspace->id()) {
+    if ($entity->id() === $active_workspace->id()) {
       $row['class'] = 'active-workspace';
     }
     return $row;
@@ -92,7 +92,7 @@ class WorkspaceListBuilder extends EntityListBuilder {
     }
 
     $active_workspace = $this->workspaceManager->getActiveWorkspace();
-    if (!$active_workspace || $entity->id() != $active_workspace->id()) {
+    if ($entity->id() != $active_workspace->id()) {
       $operations['activate'] = [
         'title' => $this->t('Switch to @workspace', ['@workspace' => $entity->label()]),
         // Use a weight lower than the one of the 'Edit' operation because we
@@ -102,15 +102,28 @@ class WorkspaceListBuilder extends EntityListBuilder {
       ];
     }
 
-    $operations['deploy'] = [
-      'title' => $this->t('Deploy content'),
-      // The 'Deploy' operation should be the default one for the currently
-      // active workspace.
-      'weight' => ($active_workspace && $entity->id() == $active_workspace->id()) ? 0 : 20,
-      'url' => $entity->toUrl('deploy-form', ['query' => ['destination' => $entity->toUrl('collection')->toString()]]),
-    ];
+    if (!$entity->isDefaultWorkspace()) {
+      $operations['deploy'] = [
+        'title' => $this->t('Deploy content'),
+        // The 'Deploy' operation should be the default one for the currently
+        // active workspace.
+        'weight' => ($entity->id() == $active_workspace->id()) ? 0 : 20,
+        'url' => $entity->toUrl('deploy-form', ['query' => ['destination' => $entity->toUrl('collection')->toString()]]),
+      ];
+    }
 
     return $operations;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function load() {
+    $entities = parent::load();
+    // Make the active workspace more visible by moving it first in the list.
+    $active_workspace = $this->workspaceManager->getActiveWorkspace();
+    $entities = [$active_workspace->id() => $entities[$active_workspace->id()]] + $entities;
+    return $entities;
   }
 
   /**
@@ -137,43 +150,34 @@ class WorkspaceListBuilder extends EntityListBuilder {
    */
   protected function offCanvasRender(array &$build) {
     $active_workspace = $this->workspaceManager->getActiveWorkspace();
-    if ($active_workspace) {
-      $active_workspace_classes = [
-        'active-workspace--not-default',
-        'active-workspace--' . $active_workspace->id(),
-      ];
-    }
-    else {
-      $active_workspace_classes = [
-        'active-workspace--default',
-      ];
-    }
-
-    $collection_url = Url::fromRoute('entity.workspace.collection');
     $row_count = count($build['table']['#rows']);
     $build['active_workspace'] = [
       '#type' => 'container',
       '#weight' => -20,
       '#attributes' => [
-        'class' => array_merge(['active-workspace'], $active_workspace_classes),
+        'class' => [
+          'active-workspace',
+          $active_workspace->isDefaultWorkspace() ? 'active-workspace--default' : 'active-workspace--not-default',
+          'active-workspace--' . $active_workspace->id(),
+        ],
       ],
       'label' => [
         '#type' => 'label',
         '#prefix' => '<div class="active-workspace__title">' . $this->t('Current workspace:') . '</div>',
-        '#title' => $active_workspace ? $active_workspace->label() : $this->t('Live'),
+        '#title' => $active_workspace->label(),
         '#title_display' => '',
         '#attributes' => ['class' => 'active-workspace__label'],
       ],
       'manage' => [
         '#type' => 'link',
         '#title' => $this->t('Manage workspaces'),
-        '#url' => $collection_url,
+        '#url' => $active_workspace->toUrl('collection'),
         '#attributes' => [
           'class' => ['active-workspace__manage'],
         ],
       ],
     ];
-    if ($active_workspace) {
+    if (!$active_workspace->isDefaultWorkspace()) {
       $build['active_workspace']['actions'] = [
         '#type' => 'container',
         '#weight' => 20,
@@ -194,7 +198,7 @@ class WorkspaceListBuilder extends EntityListBuilder {
       $build['all_workspaces'] = [
         '#type' => 'link',
         '#title' => $this->t('View all @count workspaces', ['@count' => $row_count]),
-        '#url' => $collection_url,
+        '#url' => $active_workspace->toUrl('collection'),
         '#attributes' => [
           'class' => ['all-workspaces'],
         ],
@@ -203,14 +207,15 @@ class WorkspaceListBuilder extends EntityListBuilder {
     $items = [];
     $rows = array_slice($build['table']['#rows'], 0, 5, TRUE);
     foreach ($rows as $id => $row) {
-      if (!$active_workspace || $active_workspace->id() !== $id) {
+      if ($active_workspace->id() !== $id) {
         $url = Url::fromRoute('entity.workspace.activate_form', ['workspace' => $id], ['query' => $this->getDestinationArray()]);
+        $default_class = $id === WorkspaceInterface::DEFAULT_WORKSPACE ? 'workspaces__item--default' : 'workspaces__item--not-default';
         $items[] = [
           '#type' => 'link',
           '#title' => $row['data']['label'],
           '#url' => $url,
           '#attributes' => [
-            'class' => ['use-ajax', 'workspaces__item', 'workspaces__item--not-default'],
+            'class' => ['use-ajax', 'workspaces__item', $default_class],
             'data-dialog-type' => 'modal',
             'data-dialog-options' => Json::encode([
               'width' => 500,
@@ -219,23 +224,6 @@ class WorkspaceListBuilder extends EntityListBuilder {
         ];
       }
     }
-
-    // Add an item for switching to Live.
-    if ($active_workspace) {
-      $items[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Live'),
-        '#url' => Url::fromRoute('workspaces.switch_to_live', [], ['query' => $this->getDestinationArray()]),
-        '#attributes' => [
-          'class' => ['use-ajax', 'workspaces__item', 'workspaces__item--default'],
-          'data-dialog-type' => 'modal',
-          'data-dialog-options' => Json::encode([
-            'width' => 500,
-          ]),
-        ],
-      ];
-    }
-
     $build['workspaces'] = [
       '#theme' => 'item_list',
       '#items' => $items,

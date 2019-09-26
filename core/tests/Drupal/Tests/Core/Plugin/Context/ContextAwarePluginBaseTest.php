@@ -48,8 +48,7 @@ class ContextAwarePluginBaseTest extends UnitTestCase {
    */
   public function testGetContextDefinition() {
     // The context is not defined, so an exception will be thrown.
-    $this->expectException(ContextException::class);
-    $this->expectExceptionMessage('The person context is not a valid context.');
+    $this->setExpectedException(ContextException::class, 'The person context is not a valid context.');
     $this->plugin->getContextDefinition('person');
   }
 

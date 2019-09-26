@@ -15,7 +15,6 @@ use Drupal\jsonapi\JsonApiSpec;
 use Drupal\jsonapi\ResourceType\ResourceType;
 use Drupal\jsonapi\Revisions\VersionByRel;
 use Drupal\jsonapi\Routing\Routes;
-use Drupal\user\UserInterface;
 
 /**
  * Represents a JSON:API resource object.
@@ -282,15 +281,11 @@ class ResourceObject implements CacheableDependencyInterface, ResourceIdentifier
       [$resource_type, 'isFieldEnabled']
     );
 
-    // Special handling for user entities that allows a JSON:API user agent to
-    // access the display name of a user. For example, this is useful when
-    // displaying the name of a node's author.
-    // @todo: eliminate this special casing in https://www.drupal.org/project/drupal/issues/3079254.
+    // The "label" field needs special treatment: some entity types have a label
+    // field that is actually backed by a label callback.
     $entity_type = $entity->getEntityType();
-    if ($entity_type->id() == 'user' && $resource_type->isFieldEnabled('display_name')) {
-      assert($entity instanceof UserInterface);
-      $display_name = $resource_type->getPublicName('display_name');
-      $output[$display_name] = $entity->getDisplayName();
+    if ($entity_type->hasLabelCallback()) {
+      $fields[static::getLabelFieldName($entity)]->value = $entity->label();
     }
 
     // Return a sub-array of $output containing the keys in $enabled_fields.
@@ -299,7 +294,6 @@ class ResourceObject implements CacheableDependencyInterface, ResourceIdentifier
       $public_field_name = $resource_type->getPublicName($field_name);
       $output[$public_field_name] = $field_value;
     }
-
     return $output;
   }
 
@@ -314,13 +308,9 @@ class ResourceObject implements CacheableDependencyInterface, ResourceIdentifier
    */
   protected static function getLabelFieldName(EntityInterface $entity) {
     $label_field_name = $entity->getEntityType()->getKey('label');
-    // Special handling for user entities that allows a JSON:API user agent to
-    // access the display name of a user. This is useful when displaying the
-    // name of a node's author.
-    // @see \Drupal\jsonapi\JsonApiResource\ResourceObject::extractContentEntityFields()
-    // @todo: eliminate this special casing in https://www.drupal.org/project/drupal/issues/3079254.
+    // @todo Remove this work-around after https://www.drupal.org/project/drupal/issues/2450793 lands.
     if ($entity->getEntityTypeId() === 'user') {
-      $label_field_name = 'display_name';
+      $label_field_name = 'name';
     }
     return $label_field_name;
   }

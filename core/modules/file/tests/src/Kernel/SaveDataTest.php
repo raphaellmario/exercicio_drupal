@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\file\Kernel;
 
-use Drupal\Core\StreamWrapper\StreamWrapperManagerInterface;
 use Drupal\file\Entity\File;
 
 /**
@@ -21,9 +20,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
     $result = file_save_data($contents);
     $this->assertTrue($result, 'Unnamed file saved correctly.');
 
-    $stream_wrapper_manager = \Drupal::service('stream_wrapper_manager');
-    assert($stream_wrapper_manager instanceof StreamWrapperManagerInterface);
-    $this->assertEqual(\Drupal::config('system.file')->get('default_scheme'), $stream_wrapper_manager::getScheme($result->getFileUri()), "File was placed in Drupal's files directory.");
+    $this->assertEqual(file_default_scheme(), file_uri_scheme($result->getFileUri()), "File was placed in Drupal's files directory.");
     $this->assertEqual($result->getFilename(), \Drupal::service('file_system')->basename($result->getFileUri()), "Filename was set to the file's basename.");
     $this->assertEqual($contents, file_get_contents($result->getFileUri()), 'Contents of the file are correct.');
     $this->assertEqual($result->getMimeType(), 'application/octet-stream', 'A MIME type was set.');
@@ -48,9 +45,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
     $result = file_save_data($contents, 'public://' . $filename);
     $this->assertTrue($result, 'Unnamed file saved correctly.');
 
-    $stream_wrapper_manager = \Drupal::service('stream_wrapper_manager');
-    assert($stream_wrapper_manager instanceof StreamWrapperManagerInterface);
-    $this->assertEqual('public', $stream_wrapper_manager::getScheme($result->getFileUri()), "File was placed in Drupal's files directory.");
+    $this->assertEqual('public', file_uri_scheme($result->getFileUri()), "File was placed in Drupal's files directory.");
     $this->assertEqual($filename, \Drupal::service('file_system')->basename($result->getFileUri()), 'File was named correctly.');
     $this->assertEqual($contents, file_get_contents($result->getFileUri()), 'Contents of the file are correct.');
     $this->assertEqual($result->getMimeType(), 'text/plain', 'A MIME type was set.');
@@ -74,9 +69,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
     $result = file_save_data($contents, $existing->getFileUri(), FILE_EXISTS_RENAME);
     $this->assertTrue($result, 'File saved successfully.');
 
-    $stream_wrapper_manager = \Drupal::service('stream_wrapper_manager');
-    assert($stream_wrapper_manager instanceof StreamWrapperManagerInterface);
-    $this->assertEqual('public', $stream_wrapper_manager::getScheme($result->getFileUri()), "File was placed in Drupal's files directory.");
+    $this->assertEqual('public', file_uri_scheme($result->getFileUri()), "File was placed in Drupal's files directory.");
     $this->assertEqual($result->getFilename(), $existing->getFilename(), 'Filename was set to the basename of the source, rather than that of the renamed file.');
     $this->assertEqual($contents, file_get_contents($result->getFileUri()), 'Contents of the file are correct.');
     $this->assertEqual($result->getMimeType(), 'application/octet-stream', 'A MIME type was set.');
@@ -104,9 +97,7 @@ class SaveDataTest extends FileManagedUnitTestBase {
     $result = file_save_data($contents, $existing->getFileUri(), FILE_EXISTS_REPLACE);
     $this->assertTrue($result, 'File saved successfully.');
 
-    $stream_wrapper_manager = \Drupal::service('stream_wrapper_manager');
-    assert($stream_wrapper_manager instanceof StreamWrapperManagerInterface);
-    $this->assertEqual('public', $stream_wrapper_manager::getScheme($result->getFileUri()), "File was placed in Drupal's files directory.");
+    $this->assertEqual('public', file_uri_scheme($result->getFileUri()), "File was placed in Drupal's files directory.");
     $this->assertEqual($result->getFilename(), $existing->getFilename(), 'Filename was set to the basename of the existing file, rather than preserving the original name.');
     $this->assertEqual($contents, file_get_contents($result->getFileUri()), 'Contents of the file are correct.');
     $this->assertEqual($result->getMimeType(), 'application/octet-stream', 'A MIME type was set.');

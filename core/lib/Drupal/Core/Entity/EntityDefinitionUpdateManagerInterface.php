@@ -13,11 +13,10 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
  * perform complex or long-running logic in response to the change. For
  * example, a SQL-based storage handler may need to update the database schema.
  *
- * To support this,
- * \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface has methods
- * to retrieve the last installed definitions as well as the definitions
- * specified by the current codebase. It also has create/update/delete methods
- * to bring the former up to date with the latter.
+ * To support this, \Drupal\Core\Entity\EntityManagerInterface has methods to
+ * retrieve the last installed definitions as well as the definitions specified
+ * by the current codebase. It also has create/update/delete methods to bring
+ * the former up to date with the latter.
  *
  * However, it is not the responsibility of the entity manager to decide how to
  * report the differences or when to apply each update. This interface is for
@@ -34,10 +33,10 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
  * in state allows to avoid this and ensures that the various steps of the
  * update process are predictable and repeatable.
  *
- * @see \Drupal\Core\Entity\EntityTypeManagerInterface::getDefinition()
- * @see \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface::getLastInstalledDefinition()
- * @see \Drupal\Core\Entity\EntityFieldManagerInterface::getFieldStorageDefinitions()
- * @see \Drupal\Core\Entity\EntityLastInstalledSchemaRepositoryInterface::getLastInstalledFieldStorageDefinitions()
+ * @see \Drupal\Core\Entity\EntityManagerInterface::getDefinition()
+ * @see \Drupal\Core\Entity\EntityManagerInterface::getLastInstalledDefinition()
+ * @see \Drupal\Core\Entity\EntityManagerInterface::getFieldStorageDefinitions()
+ * @see \Drupal\Core\Entity\EntityManagerInterface::getLastInstalledFieldStorageDefinitions()
  * @see hook_update_N()
  */
 interface EntityDefinitionUpdateManagerInterface {

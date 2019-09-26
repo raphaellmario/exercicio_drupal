@@ -37,7 +37,7 @@ display:
           id: wid
           table: watchdog
           field: wid
-          plugin_id: standard
+          plugin_id: numeric
         message:
           id: message
           table: watchdog

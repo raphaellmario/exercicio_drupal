@@ -133,8 +133,7 @@ class ArgumentsResolverTest extends TestCase {
       $this->expectExceptionMessage('requires a value for the "$route" argument.');
     }
     else {
-      $this->expectException(\RuntimeException::class);
-      $this->expectExceptionMessage('requires a value for the "$route" argument.');
+      $this->setExpectedException(\RuntimeException::class, 'requires a value for the "$route" argument.');
     }
     $resolver->getArguments($callable);
   }
@@ -168,8 +167,7 @@ class ArgumentsResolverTest extends TestCase {
       $this->expectExceptionMessage('requires a value for the "$foo" argument.');
     }
     else {
-      $this->expectException(\RuntimeException::class);
-      $this->expectExceptionMessage('requires a value for the "$foo" argument.');
+      $this->setExpectedException(\RuntimeException::class, 'requires a value for the "$foo" argument.');
     }
     $resolver->getArguments($callable);
   }
@@ -186,8 +184,7 @@ class ArgumentsResolverTest extends TestCase {
       $this->expectExceptionMessage('requires a value for the "$foo" argument.');
     }
     else {
-      $this->expectException(\RuntimeException::class);
-      $this->expectExceptionMessage('requires a value for the "$foo" argument.');
+      $this->setExpectedException(\RuntimeException::class, 'requires a value for the "$foo" argument.');
     }
     $resolver->getArguments($callable);
   }

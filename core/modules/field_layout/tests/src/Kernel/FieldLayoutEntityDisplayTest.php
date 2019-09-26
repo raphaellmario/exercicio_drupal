@@ -41,9 +41,7 @@ class FieldLayoutEntityDisplayTest extends KernelTestBase {
       'third_party_settings' => [
         'field_layout' => [
           'id' => 'layout_onecol',
-          'settings' => [
-            'label' => '',
-          ],
+          'settings' => [],
         ],
       ],
       'id' => 'entity_test.entity_test.default',
@@ -146,9 +144,7 @@ class FieldLayoutEntityDisplayTest extends KernelTestBase {
     // The layout has been updated.
     $expected['third_party_settings']['field_layout'] = [
       'id' => 'test_layout_content_and_footer',
-      'settings' => [
-        'label' => '',
-      ],
+      'settings' => [],
     ];
     // The field remains in its current region instead of moving to the default.
     $this->assertEntityValues($expected, $entity_display->toArray());

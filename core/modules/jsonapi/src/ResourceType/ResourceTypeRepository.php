@@ -61,26 +61,18 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
   protected $entityFieldManager;
 
   /**
-   * The cache backend.
+   * The static cache backend.
    *
    * @var \Drupal\Core\Cache\CacheBackendInterface
    */
-  protected $cache;
+  protected $staticCache;
 
   /**
-   * Cache tags used for caching the repository.
+   * Instance data cache.
    *
-   * @var string[]
+   * @var array
    */
-  protected $cacheTags = [
-    'jsonapi_resource_types',
-    // Invalidate whenever field definitions are modified.
-    'entity_field_info',
-    // Invalidate whenever the set of bundles changes.
-    'entity_bundles',
-    // Invalidate whenever the set of entity types changes.
-    'entity_types',
-  ];
+  protected $cache = [];
 
   /**
    * Instantiates a ResourceTypeRepository object.
@@ -91,37 +83,33 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
    *   The entity type bundle info service.
    * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
    *   The entity field manager.
-   * @param \Drupal\Core\Cache\CacheBackendInterface $cache
-   *   The cache backend.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $static_cache
+   *   The static cache backend.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_bundle_info, EntityFieldManagerInterface $entity_field_manager, CacheBackendInterface $cache) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, EntityTypeBundleInfoInterface $entity_bundle_info, EntityFieldManagerInterface $entity_field_manager, CacheBackendInterface $static_cache) {
     $this->entityTypeManager = $entity_type_manager;
     $this->entityTypeBundleInfo = $entity_bundle_info;
     $this->entityFieldManager = $entity_field_manager;
-    $this->cache = $cache;
+    $this->staticCache = $static_cache;
   }
 
   /**
    * {@inheritdoc}
    */
   public function all() {
-    $cached = $this->cache->get('jsonapi.resource_types', FALSE);
+    $cached = $this->staticCache->get('jsonapi.resource_types', FALSE);
     if ($cached === FALSE) {
       $resource_types = [];
       foreach ($this->entityTypeManager->getDefinitions() as $entity_type) {
-        $bundles = array_keys($this->entityTypeBundleInfo->getBundleInfo($entity_type->id()));
-        $resource_types = array_reduce($bundles, function ($resource_types, $bundle) use ($entity_type) {
-          $resource_type = $this->createResourceType($entity_type, (string) $bundle);
-          return array_merge($resource_types, [
-            $resource_type->getTypeName() => $resource_type,
-          ]);
-        }, $resource_types);
+        $resource_types = array_merge($resource_types, array_map(function ($bundle) use ($entity_type) {
+          return $this->createResourceType($entity_type, (string) $bundle);
+        }, array_keys($this->entityTypeBundleInfo->getBundleInfo($entity_type->id()))));
       }
       foreach ($resource_types as $resource_type) {
         $relatable_resource_types = $this->calculateRelatableResourceTypes($resource_type, $resource_types);
         $resource_type->setRelatableResourceTypes($relatable_resource_types);
       }
-      $this->cache->set('jsonapi.resource_types', $resource_types, Cache::PERMANENT, $this->cacheTags);
+      $this->staticCache->set('jsonapi.resource_types', $resource_types, Cache::PERMANENT, ['jsonapi_resource_types']);
     }
     return $cached ? $cached->data : $resource_types;
   }
@@ -160,15 +148,31 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
       throw new PreconditionFailedHttpException('Server error. The current route is malformed.');
     }
 
-    return $this->getByTypeName("$entity_type_id--$bundle");
+    $cid = "jsonapi:resource_type:$entity_type_id:$bundle";
+    if (!array_key_exists($cid, $this->cache)) {
+      $result = NULL;
+      foreach ($this->all() as $resource) {
+        if ($resource->getEntityTypeId() == $entity_type_id && $resource->getBundle() == $bundle) {
+          $result = $resource;
+          break;
+        }
+      }
+      $this->cache[$cid] = $result;
+    }
+
+    return $this->cache[$cid];
   }
 
   /**
    * {@inheritdoc}
    */
   public function getByTypeName($type_name) {
-    $resource_types = $this->all();
-    return isset($resource_types[$type_name]) ? $resource_types[$type_name] : NULL;
+    foreach ($this->all() as $resource) {
+      if ($resource->getTypeName() == $type_name) {
+        return $resource;
+      }
+    }
+    return NULL;
   }
 
   /**
@@ -233,8 +237,8 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
     foreach (array_diff($field_names, array_keys($mapping)) as $field_name) {
       if ($field_name === 'id' || $field_name === 'type') {
         $alias = $entity_type->id() . '_' . $field_name;
-        if (in_array($alias, $field_names, TRUE)) {
-          throw new \LogicException("The generated alias '{$alias}' for field name '{$field_name}' conflicts with an existing field. Please report this in the JSON:API issue queue!");
+        if (isset($field_name[$alias])) {
+          throw new \LogicException('The generated alias conflicts with an existing field. Please report this in the JSON:API issue queue!');
         }
         $mapping[$field_name] = $alias;
         continue;
@@ -242,15 +246,6 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
 
       // The default, which applies to most fields: expose as-is.
       $mapping[$field_name] = TRUE;
-    }
-
-    // Special handling for user entities that allows a JSON:API user agent to
-    // access the display name of a user. This is useful when displaying the
-    // name of a node's author.
-    // @see \Drupal\jsonapi\JsonApiResource\ResourceObject::extractContentEntityFields()
-    // @todo: eliminate this special casing in https://www.drupal.org/project/drupal/issues/3079254.
-    if ($entity_type->id() === 'user') {
-      $mapping['display_name'] = TRUE;
     }
 
     return $mapping;
@@ -400,8 +395,11 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
       : $this->getAllBundlesForEntityType($entity_type_id);
 
     return array_map(function ($target_bundle) use ($entity_type_id, $resource_types) {
-      $type_name = "$entity_type_id--$target_bundle";
-      return isset($resource_types[$type_name]) ? $resource_types[$type_name] : NULL;
+      foreach ($resource_types as $resource_type) {
+        if ($resource_type->getEntityTypeId() === $entity_type_id && $resource_type->getBundle() === $target_bundle) {
+          return $resource_type;
+        }
+      }
     }, $target_bundles);
   }
 
@@ -416,18 +414,11 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
    *   otherwise.
    */
   protected function isReferenceFieldDefinition(FieldDefinitionInterface $field_definition) {
-    static $field_type_is_reference = [];
-
-    if (isset($field_type_is_reference[$field_definition->getType()])) {
-      return $field_type_is_reference[$field_definition->getType()];
-    }
-
     /* @var \Drupal\Core\Field\TypedData\FieldItemDataDefinition $item_definition */
     $item_definition = $field_definition->getItemDefinition();
     $main_property = $item_definition->getMainPropertyName();
     $property_definition = $item_definition->getPropertyDefinition($main_property);
-
-    return $field_type_is_reference[$field_definition->getType()] = $property_definition instanceof DataReferenceTargetDefinition;
+    return $property_definition instanceof DataReferenceTargetDefinition;
   }
 
   /**

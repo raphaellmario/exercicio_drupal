@@ -625,12 +625,10 @@ function template_preprocess_form_element_label(&$variables) {
  *   if (empty($context['sandbox'])) {
  *     $context['sandbox']['progress'] = 0;
  *     $context['sandbox']['current_id'] = 0;
- *     $context['sandbox']['max'] = \Drupal::database()
- *       ->query('SELECT COUNT(DISTINCT id) FROM {example}')
- *       ->fetchField();
+ *     $context['sandbox']['max'] = db_query('SELECT COUNT(DISTINCT id) FROM {example}')->fetchField();
  *   }
  *   $limit = 5;
- *   $result = \Drupal::database()->select('example')
+ *   $result = db_select('example')
  *     ->fields('example', array('id'))
  *     ->condition('id', $context['sandbox']['current_id'], '>')
  *     ->orderBy('id')

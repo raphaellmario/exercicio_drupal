@@ -275,7 +275,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
       ],
     ]);
     $test_scenarios['add_published_node_in_stage'] = $revision_state;
-    $expected_workspace_association['add_published_node_in_stage'] = ['stage' => [3, 4, 5, 7]];
+    $expected_workspace_association['add_published_node_in_stage'] = ['stage' => [3, 4, 5, 6, 7]];
 
     // Deploying 'stage' to 'live' should simply make the latest revisions in
     // 'stage' the default ones in 'live'.
@@ -365,9 +365,8 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $this->switchToWorkspace('stage');
 
     // Add a workspace-specific revision to a pre-existing node.
-    $node = $this->entityTypeManager->getStorage('node')->load(2);
-    $node->title->value = 'stage - 2 - r3 - published';
-    $node->save();
+    $this->nodes[1]->title->value = 'stage - 2 - r3 - published';
+    $this->nodes[1]->save();
 
     $query = $this->entityTypeManager->getStorage('node')->getQuery();
     $query->sort('nid');
@@ -489,8 +488,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     }
 
     if (!$allowed) {
-      $this->expectException(EntityStorageException::class);
-      $this->expectExceptionMessage('This entity can only be saved in the default workspace.');
+      $this->setExpectedException(EntityStorageException::class, 'This entity can only be saved in the default workspace.');
     }
     $entity->save();
   }
@@ -506,7 +504,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $storage = $this->entityTypeManager->getStorage($entity_type_id);
 
     // Create the entity in the default workspace.
-    $this->workspaceManager->switchToLive();
+    $this->switchToWorkspace('live');
     $entity = $storage->createWithSampleValues($entity_type_id);
     if ($entity_type_id === 'workspace') {
       $entity->id = 'test';
@@ -520,8 +518,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $entity->created->value = 1;
 
     if (!$allowed) {
-      $this->expectException(EntityStorageException::class);
-      $this->expectExceptionMessage('This entity can only be saved in the default workspace.');
+      $this->setExpectedException(EntityStorageException::class, 'This entity can only be saved in the default workspace.');
     }
     $entity->save();
   }
@@ -537,7 +534,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $storage = $this->entityTypeManager->getStorage($entity_type_id);
 
     // Create the entity in the default workspace.
-    $this->workspaceManager->switchToLive();
+    $this->switchToWorkspace('live');
     $entity = $storage->createWithSampleValues($entity_type_id);
     if ($entity_type_id === 'workspace') {
       $entity->id = 'test';
@@ -549,8 +546,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $this->switchToWorkspace('stage');
 
     if (!$allowed) {
-      $this->expectException(EntityStorageException::class);
-      $this->expectExceptionMessage('This entity can only be deleted in the default workspace.');
+      $this->setExpectedException(EntityStorageException::class, 'This entity can only be deleted in the default workspace.');
     }
     $entity->delete();
   }
@@ -582,7 +578,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $this->initializeWorkspacesModule();
 
     // Create an entity in the default workspace.
-    $this->workspaceManager->switchToLive();
+    $this->switchToWorkspace('live');
     $node = $this->createNode([
       'title' => 'live node 1',
     ]);
@@ -595,12 +591,12 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $node->save();
 
     // Switch back to the default workspace and run the baseline assertions.
-    $this->workspaceManager->switchToLive();
+    $this->switchToWorkspace('live');
     $storage = $this->entityTypeManager->getStorage('node');
 
-    $this->assertFalse($this->workspaceManager->hasActiveWorkspace());
+    $this->assertEquals('live', $this->workspaceManager->getActiveWorkspace()->id());
 
-    $live_node = $storage->load($node->id());
+    $live_node = $storage->loadUnchanged($node->id());
     $this->assertEquals('live node 1', $live_node->title->value);
 
     $result = $storage->getQuery()
@@ -612,7 +608,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $this->workspaceManager->executeInWorkspace('stage', function () use ($node, $storage) {
       $this->assertEquals('stage', $this->workspaceManager->getActiveWorkspace()->id());
 
-      $stage_node = $storage->load($node->id());
+      $stage_node = $storage->loadUnchanged($node->id());
       $this->assertEquals('stage node 1', $stage_node->title->value);
 
       $result = $storage->getQuery()
@@ -623,7 +619,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
 
     // Check that the 'stage' workspace was not persisted by the workspace
     // manager.
-    $this->assertFalse($this->workspaceManager->getActiveWorkspace());
+    $this->assertEquals('live', $this->workspaceManager->getActiveWorkspace()->id());
   }
 
   /**
@@ -704,18 +700,6 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $entities = $this->entityTypeManager->getStorage($entity_type_id)->loadMultiple(array_column($expected_default_revisions, $id_key));
     foreach ($expected_default_revisions as $expected_default_revision) {
       $entity_id = $expected_default_revision[$id_key];
-      $this->assertEquals($expected_default_revision[$revision_key], $entities[$entity_id]->getRevisionId());
-      $this->assertEquals($expected_default_revision[$label_key], $entities[$entity_id]->label());
-      $this->assertEquals($expected_default_revision[$published_key], $entities[$entity_id]->isPublished());
-    }
-
-    // Check loading entities one by one. It is important to do these checks
-    // after the "multiple load" ones above so we can test with a fully warmed
-    // static cache.
-    foreach ($expected_default_revisions as $expected_default_revision) {
-      $entity_id = $expected_default_revision[$id_key];
-      $entities = $this->entityTypeManager->getStorage($entity_type_id)->loadMultiple([$entity_id]);
-      $this->assertCount(1, $entities);
       $this->assertEquals($expected_default_revision[$revision_key], $entities[$entity_id]->getRevisionId());
       $this->assertEquals($expected_default_revision[$label_key], $entities[$entity_id]->label());
       $this->assertEquals($expected_default_revision[$published_key], $entities[$entity_id]->isPublished());
@@ -810,7 +794,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
   }
 
   /**
-   * Checks the workspace_association records for a test scenario.
+   * Checks the workspace_association entries for a test scenario.
    *
    * @param array $expected
    *   An array of expected values, as defined in ::testWorkspaces().
@@ -818,10 +802,10 @@ class WorkspaceIntegrationTest extends KernelTestBase {
    *   The ID of the entity type that is being tested.
    */
   protected function assertWorkspaceAssociation(array $expected, $entity_type_id) {
-    /** @var \Drupal\workspaces\WorkspaceAssociationInterface $workspace_association */
-    $workspace_association = \Drupal::service('workspaces.association');
+    /** @var \Drupal\workspaces\WorkspaceAssociationStorageInterface $workspace_association_storage */
+    $workspace_association_storage = $this->entityTypeManager->getStorage('workspace_association');
     foreach ($expected as $workspace_id => $expected_tracked_revision_ids) {
-      $tracked_entities = $workspace_association->getTrackedEntities($workspace_id, $entity_type_id);
+      $tracked_entities = $workspace_association_storage->getTrackedEntities($workspace_id, TRUE);
       $tracked_revision_ids = isset($tracked_entities[$entity_type_id]) ? $tracked_entities[$entity_type_id] : [];
       $this->assertEquals($expected_tracked_revision_ids, array_keys($tracked_revision_ids));
     }
@@ -892,7 +876,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $this->initializeWorkspacesModule();
     $node_storage = $this->entityTypeManager->getStorage('node');
 
-    $this->workspaceManager->switchToLive();
+    $this->switchToWorkspace('live');
     $node = $node_storage->create([
       'title' => 'Foo title',
       // Use the body field on node as a test case because it requires dedicated
@@ -908,7 +892,7 @@ class WorkspaceIntegrationTest extends KernelTestBase {
     $node->save();
 
     $this->workspaces['stage']->publish();
-    $this->workspaceManager->switchToLive();
+    $this->switchToWorkspace('live');
 
     $reloaded = $node_storage->load($node->id());
     $this->assertEquals('Bar title', $reloaded->title->value);

@@ -33,8 +33,7 @@ class MenuLinkParentTest extends MigrateProcessTestCase {
    * @covers ::transform
    */
   public function testTransformException() {
-    $this->expectException(MigrateSkipRowException::class);
-    $this->expectExceptionMessage("No parent link found for plid '1' in menu 'admin'.");
+    $this->setExpectedException(MigrateSkipRowException::class, "No parent link found for plid '1' in menu 'admin'.");
     $this->plugin->transform([1, 'admin', NULL], $this->migrateExecutable, $this->row, 'destinationproperty');
   }
 

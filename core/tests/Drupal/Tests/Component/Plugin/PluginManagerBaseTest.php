@@ -126,8 +126,7 @@ class PluginManagerBaseTest extends TestCase {
       $this->expectExceptionMessage(sprintf('%s does not support this method unless %s::$mapper is set.', get_class($manager), get_class($manager)));
     }
     else {
-      $this->expectException(\BadMethodCallException::class);
-      $this->expectExceptionMessage(sprintf('%s does not support this method unless %s::$mapper is set.', get_class($manager), get_class($manager)));
+      $this->setExpectedException(\BadMethodCallException::class, sprintf('%s does not support this method unless %s::$mapper is set.', get_class($manager), get_class($manager)));
     }
     $manager->getInstance($options);
   }

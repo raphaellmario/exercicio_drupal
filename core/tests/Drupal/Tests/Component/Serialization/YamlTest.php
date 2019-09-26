@@ -16,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class YamlTest extends TestCase {
 
   /**
-   * @var \PHPUnit\Framework\MockObject\MockObject
+   * @var \PHPUnit_Framework_MockObject_MockObject
    */
   protected $mockParser;
 

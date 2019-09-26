@@ -11,6 +11,7 @@ use Drupal\Tests\jsonapi\Kernel\JsonapiKernelTestBase;
 /**
  * @coversDefaultClass \Drupal\jsonapi\Context\FieldResolver
  * @group jsonapi
+ * @group legacy
  *
  * @internal
  */
@@ -126,10 +127,7 @@ class FieldResolverTest extends JsonapiKernelTestBase {
    */
   public function testResolveInternalIncludePathError($entity_type, $bundle, $external_path, $expected_message = '') {
     $path_parts = explode('.', $external_path);
-    $this->expectException(CacheableBadRequestHttpException::class);
-    if (!empty($expected_message)) {
-      $this->expectExceptionMessage($expected_message);
-    }
+    $this->setExpectedException(CacheableBadRequestHttpException::class, $expected_message);
     $resource_type = $this->resourceTypeRepository->get($entity_type, $bundle);
     $this->sut->resolveInternalIncludePath($resource_type, $path_parts);
   }
@@ -248,10 +246,7 @@ class FieldResolverTest extends JsonapiKernelTestBase {
    * @dataProvider resolveInternalEntityQueryPathErrorProvider
    */
   public function testResolveInternalEntityQueryPathError($entity_type, $bundle, $external_path, $expected_message = '') {
-    $this->expectException(CacheableBadRequestHttpException::class);
-    if (!empty($expected_message)) {
-      $this->expectExceptionMessage($expected_message);
-    }
+    $this->setExpectedException(CacheableBadRequestHttpException::class, $expected_message);
     $this->sut->resolveInternalEntityQueryPath($entity_type, $bundle, $external_path);
   }
 

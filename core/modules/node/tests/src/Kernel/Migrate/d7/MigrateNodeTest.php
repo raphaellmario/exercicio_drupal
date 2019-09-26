@@ -131,7 +131,7 @@ class MigrateNodeTest extends MigrateDrupal7TestBase {
    *   The revision's time stamp.
    */
   protected function assertRevision($id, $title, $uid, $log, $timestamp) {
-    $revision = \Drupal::entityTypeManager()->getStorage('node')->loadRevision($id);
+    $revision = \Drupal::entityManager()->getStorage('node')->loadRevision($id);
     $this->assertInstanceOf(NodeInterface::class, $revision);
     $this->assertEquals($title, $revision->getTitle());
     $this->assertEquals($uid, $revision->getRevisionUser()->id());
@@ -210,16 +210,6 @@ class MigrateNodeTest extends MigrateDrupal7TestBase {
 
     $node = Node::load(7);
     $this->assertEquals(CommentItemInterface::OPEN, $node->comment_forum->status);
-
-    // Test synchronized field.
-    $value = 'Kai Opaka';
-    $node = Node::load(2);
-    $this->assertSame($value, $node->field_text_plain->value);
-    $this->assertArrayNotHasKey('field_text_plain', $node->getTranslatableFields());
-
-    $node = $node->getTranslation('is');
-    $this->assertSame($value, $node->field_text_plain->value);
-
   }
 
   /**

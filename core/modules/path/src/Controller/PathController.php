@@ -4,7 +4,6 @@ namespace Drupal\path\Controller;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Link;
 use Drupal\Core\Path\AliasStorageInterface;
 use Drupal\Core\Path\AliasManagerInterface;
 use Drupal\Core\Url;
@@ -85,13 +84,13 @@ class PathController extends ControllerBase {
       $row = [];
       // @todo Should Path module store leading slashes? See
       //   https://www.drupal.org/node/2430593.
-      $row['data']['alias'] = Link::fromTextAndUrl(Unicode::truncate($data->alias, 50, FALSE, TRUE), Url::fromUserInput($data->source, [
+      $row['data']['alias'] = $this->l(Unicode::truncate($data->alias, 50, FALSE, TRUE), Url::fromUserInput($data->source, [
         'attributes' => ['title' => $data->alias],
-      ]))->toString();
-      $row['data']['source'] = Link::fromTextAndUrl(Unicode::truncate($data->source, 50, FALSE, TRUE), Url::fromUserInput($data->source, [
+      ]));
+      $row['data']['source'] = $this->l(Unicode::truncate($data->source, 50, FALSE, TRUE), Url::fromUserInput($data->source, [
         'alias' => TRUE,
         'attributes' => ['title' => $data->source],
-      ]))->toString();
+      ]));
       if ($multilanguage) {
         $row['data']['language_name'] = $this->languageManager()->getLanguageName($data->langcode);
       }
@@ -125,7 +124,7 @@ class PathController extends ControllerBase {
       '#type' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#empty' => $this->t('No URL aliases available. <a href=":link">Add URL alias</a>.', [':link' => Url::fromRoute('path.admin_add')->toString()]),
+      '#empty' => $this->t('No URL aliases available. <a href=":link">Add URL alias</a>.', [':link' => $this->url('path.admin_add')]),
     ];
     $build['path_pager'] = ['#type' => 'pager'];
 

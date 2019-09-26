@@ -315,9 +315,6 @@ services:
     public: false
     tags:
       - { name: backend_overridable }
-  config.storage.export:
-    class: Drupal\Core\Config\ReadOnlyStorage
-    arguments: ['@config.storage']
   # @deprecated in Drupal 8.0.x and will be removed before 9.0.0. Use
   #   config.storage.sync instead.
   # @see https://www.drupal.org/node/2574957
@@ -536,7 +533,7 @@ services:
     class: Drupal\Core\Extension\RequiredModuleUninstallValidator
     tags:
       - { name: module_install.uninstall_validator }
-    arguments: ['@string_translation', '@extension.list.module']
+    arguments: ['@string_translation']
     lazy: true
   theme_handler:
     class: Drupal\Core\Extension\ThemeHandler
@@ -547,9 +544,10 @@ services:
   # @deprecated in Drupal 8.0.x and will be removed before 9.0.0. Use the other
   #   entity* services instead.
   entity.manager:
+    # We cannot set the deprecated property here because many test cases still
+    # rely on this service and they would fail with deprecation warnings.
     class: Drupal\Core\Entity\EntityManager
     parent: container.trait
-    deprecated: The "%service_id%" service is deprecated. You should use the 'entity_type.manager' service instead.
   entity.memory_cache:
     class: Drupal\Core\Cache\MemoryCache\MemoryCache
   entity_type.manager:
@@ -1092,13 +1090,13 @@ services:
       - { name: render.main_content_renderer, format: html }
   main_content_renderer.ajax:
     class: Drupal\Core\Render\MainContent\AjaxRenderer
-    arguments: ['@element_info', '@renderer']
+    arguments: ['@element_info']
     tags:
       - { name: render.main_content_renderer, format: drupal_ajax }
       - { name: render.main_content_renderer, format: iframeupload }
   main_content_renderer.dialog:
     class: Drupal\Core\Render\MainContent\DialogRenderer
-    arguments: ['@title_resolver', '@renderer']
+    arguments: ['@title_resolver']
     tags:
       - { name: render.main_content_renderer, format: drupal_dialog }
   main_content_renderer.off_canvas:
@@ -1113,7 +1111,7 @@ services:
       - { name: render.main_content_renderer, format: drupal_dialog.off_canvas_top }
   main_content_renderer.modal:
     class: Drupal\Core\Render\MainContent\ModalRenderer
-    arguments: ['@title_resolver', '@renderer']
+    arguments: ['@title_resolver']
     tags:
       - { name: render.main_content_renderer, format: drupal_modal }
   controller.form:
@@ -1264,7 +1262,7 @@ services:
     class: Drupal\Core\EventSubscriber\ConfigImportSubscriber
     tags:
       - { name: event_subscriber }
-    arguments: ['@theme_handler', '@extension.list.module']
+    arguments: ['@theme_handler']
   config_snapshot_subscriber:
     class: Drupal\Core\EventSubscriber\ConfigSnapshotSubscriber
     tags:
@@ -1529,7 +1527,6 @@ services:
     arguments: ['@private_key', '@cache.bootstrap', '@cache.static']
   current_user:
     class: Drupal\Core\Session\AccountProxy
-    arguments: ['@event_dispatcher']
   session_configuration:
     class: Drupal\Core\Session\SessionConfiguration
     arguments: ['%session.storage.options%']
@@ -1599,7 +1596,7 @@ services:
       - { name: needs_destruction }
   library.discovery.parser:
     class: Drupal\Core\Asset\LibraryDiscoveryParser
-    arguments: ['@app.root', '@module_handler', '@theme.manager', '@stream_wrapper_manager']
+    arguments: ['@app.root', '@module_handler', '@theme.manager']
   library.dependency_resolver:
     class: Drupal\Core\Asset\LibraryDependencyResolver
     arguments: ['@library.discovery']

@@ -46,7 +46,7 @@ class BlockPluginId extends ProcessPluginBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, MigrationInterface $migration = NULL) {
-    $entity_type_manager = $container->get('entity_type.manager');
+    $entity_manager = $container->get('entity.manager');
     $migration_configuration = [
       'migration' => [
         'd6_custom_block',
@@ -57,7 +57,7 @@ class BlockPluginId extends ProcessPluginBase implements ContainerFactoryPluginI
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $entity_type_manager->getDefinition('block_content') ? $entity_type_manager->getStorage('block_content') : NULL,
+      $entity_manager->getDefinition('block_content') ? $entity_manager->getStorage('block_content') : NULL,
       $container->get('plugin.manager.migrate.process')->createInstance('migration', $migration_configuration, $migration)
     );
   }
