@@ -1,0 +1,7 @@
+name: phpunit_example
+description: 'Custom phpunit_example'
+package: PHPUnit
+
+type: module
+core: 8.x
+

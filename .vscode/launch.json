@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Listen for XDebug",
+      "port": 9000,
+      "log": true,
+      "pathMappings": {
+        "/app/": "${workspaceRoot}/",
+      }
+    },
+    {
+      "name": "Launch currently open script",
+      "program": "${file}",
+      "cwd": "${fileDirname}",
+      "port": 9000
+    }
+  ]
+}

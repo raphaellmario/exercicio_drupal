@@ -1,0 +1,21 @@
+name: d8
+recipe: drupal8
+config:
+  database: mariadb
+  drupal: true
+  xdebug: true
+  webroot: .
+  ssl: true
+  conf:
+    php: .vscode/php.ini
+tooling:
+  update-drupal:
+    description: Import configs and install composer.
+    service: appserver
+    cmd:
+      - cd $LANDO_WEBROOT && drush updb -y
+      - cd $LANDO_WEBROOT && drush cim -y
+      - cd $LANDO_WEBROOT && rm -rf vendor && composer install
+      - cd $LANDO_WEBROOT && drush cr -y
+    stdout:
+      description: Importing configs and install composer ...
