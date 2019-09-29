@@ -1,0 +1,25 @@
+uuid: 03a8a67d-b83e-4b51-8cd3-864a888d6101
+langcode: en
+status: false
+dependencies:
+  content:
+    - 'block_content:basic:00915ecb-6d91-4c2c-adb7-7a0aaac05872'
+  module:
+    - block_content
+  theme:
+    - rsvp_event
+id: socialmedia
+theme: rsvp_event
+region: footer
+weight: 0
+provider: null
+plugin: 'block_content:00915ecb-6d91-4c2c-adb7-7a0aaac05872'
+settings:
+  id: 'block_content:00915ecb-6d91-4c2c-adb7-7a0aaac05872'
+  label: 'Social Media'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility: {  }

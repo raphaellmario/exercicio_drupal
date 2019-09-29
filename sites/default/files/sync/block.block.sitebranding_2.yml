@@ -1,0 +1,23 @@
+uuid: 72fd55de-0844-4f24-8274-d6d1c4bdd0d4
+langcode: en
+status: false
+dependencies:
+  module:
+    - system
+  theme:
+    - rsvp_event
+id: sitebranding_2
+theme: rsvp_event
+region: footer
+weight: -4
+provider: null
+plugin: system_branding_block
+settings:
+  id: system_branding_block
+  label: 'Site branding'
+  provider: system
+  label_display: '0'
+  use_site_logo: false
+  use_site_name: true
+  use_site_slogan: false
+visibility: {  }

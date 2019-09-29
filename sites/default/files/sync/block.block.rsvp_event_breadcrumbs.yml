@@ -1,0 +1,22 @@
+uuid: c72dadbf-18d5-4f96-8788-6d222d73e42d
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - rsvp_event
+_core:
+  default_config_hash: oXUb3JZR2WW5VOdw4HrhRicCsq51mCgLfRyvheG68ck
+id: rsvp_event_breadcrumbs
+theme: rsvp_event
+region: content
+weight: -4
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: Breadcrumbs
+  provider: system
+  label_display: '0'
+visibility: {  }
