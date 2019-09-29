@@ -1,0 +1,5 @@
+rsvp:
+  version: 1.x
+  css:
+    base:
+      css/contact.css: {}

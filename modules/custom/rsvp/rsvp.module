@@ -10,10 +10,13 @@
  */
 function rsvp_theme($existing, $type, $theme, $path) {
   return [
-    'home_template' => [
+    'event_detail_template' => [
       'variables' => ['list' => NULL, 'data' => NULL],
     ],
     'events_template' => [
+      'variables' => ['list' => NULL, 'data' => NULL],
+    ],
+    'contact_template' => [
       'variables' => ['list' => NULL, 'data' => NULL],
     ]
   ];

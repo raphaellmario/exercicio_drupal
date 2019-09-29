@@ -2,6 +2,7 @@
 
 namespace Drupal\rsvp\Controller;
 
+use Drupal\image\Entity\ImageStyle;
 use Drupal\Core\Controller\ControllerBase;
 
 /**
@@ -26,38 +27,26 @@ class RsvpEventController extends ControllerBase {
     ];
 
     $theme['#data'] = [
-      'title' => 'The main events are comming',
-      'subtitle' => 'check the upcoming events in the upcoming days',
+      'title' => 'Next Events',
     ];
 
-    $theme['#list'] = [
-      0 => [
-        'title' => 'USP - Congresso nacional de robótica no estado de São Paulo',
-        'description' => 'Morbi mattis ullamcorper velit. Praesent venenatis metus at tortor pulvinar varius. Phasellus magna.',
-        'date' => '09/10',
-      ],
-      1 => [
-        'title' => 'UFES - Congresso nacional de robótica no estado de São Paulo',
-        'description' => 'Morbi mattis ullamcorper velit. Praesent venenatis metus at tortor pulvinar varius. Phasellus magna.',
-        'date' => '09/11',
-      ],
-      2 => [
-        'title' => 'UFMG - Congresso nacional de robótica no estado de São Paulo',
-        'description' => 'Morbi mattis ullamcorper velit. Praesent venenatis metus at tortor pulvinar varius. Phasellus magna.',
-        'date' => '09/12',
-      ],
-      3 => [
-        'title' => 'UFMG - Congresso nacional de robótica no estado de São Paulo',
-        'description' => 'Morbi mattis ullamcorper velit. Praesent venenatis metus at tortor pulvinar varius. Phasellus magna.',
-        'date' => '09/12',
-      ],
-      4 => [
-        'title' => 'UFMG - Congresso nacional de robótica no estado de São Paulo',
-        'description' => 'Morbi mattis ullamcorper velit. Praesent venenatis metus at tortor pulvinar varius. Phasellus magna.',
-        'date' => '09/12',
-      ],
-    ];
-
+    $nids = \Drupal::entityQuery('node')->condition('type', 'event')->execute();
+    $list =  \Drupal\node\Entity\Node::loadMultiple($nids);
+    foreach ($list as $node) {
+      $event["id"] = $node->get('nid')->value;
+      $event["title"] = substr($node->get('title')->value,0,100);
+      $event["image"] = ImageStyle::load('image_card')->buildUrl($node->field_image->entity->getFileUri());
+      $event["description"] = substr($node->get('field_description')->value,0,130) . " ...";
+      $event["location"] = $node->get('field_location')->value;
+      $strtotime = strtotime($node->get('field_date')->value);
+      $day = date("d",$strtotime);
+      $month = date("M",$strtotime);
+      $event["date"] = "<div class=\"day\">{$day}</div><div class=\"month\">{$month}</div>";
+      $event["attendees"] = $node->get('field_attendees')->value;
+      $event["button"] = $node->get('field_rsvp_button')->value;
+      $theme['#list'][] = $event;
+    }
+    // var_dump($theme);die();
     return $theme;
   }
 
