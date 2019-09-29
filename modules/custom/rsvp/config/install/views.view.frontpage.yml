@@ -17,7 +17,7 @@ dependencies:
     - text
     - user
 _core:
-  default_config_hash: CVyqFk4uemKQHkVc0bbBGruh4BAa_1zr6gDDr6-y8jw
+  default_config_hash: '-YdTL25ZMeL16Jsoq6qKUK9H2F-ReEatggvvKgFZ1jI'
 id: frontpage
 label: Frontpage
 module: node
@@ -38,16 +38,16 @@ display:
         options: {  }
       empty:
         area_text_custom:
-          admin_label: ''
-          content: 'No front page content has been created yet.<br/>Follow the <a target="_blank" href="https://www.drupal.org/docs/user_guide/en/index.html">User Guide</a> to start building your site.'
-          empty: true
-          field: area_text_custom
-          group_type: group
           id: area_text_custom
-          label: ''
-          relationship: none
           table: views
+          field: area_text_custom
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: true
           tokenize: false
+          content: "<div class=\"container\">\r\n  <div class=\"col-xs-12 text-center\">\r\n    <h1> No events currently available </h1>\r\n  </div>\r\n</div>"
+          label: ''
           plugin_id: text_custom
         node_listing_empty:
           admin_label: ''
@@ -262,7 +262,20 @@ display:
             value: "<div class=\"row'\">\r\n  <div class=\"col-sm-12 title-page text-center\">\r\n    <h1 class=\"black\">The main events are comming</h1>\r\n    <h2 class=\"gray\">check the upcoming events in the upcoming days</h2>\r\n  </div>\r\n</div>"
             format: full_html
           plugin_id: text
-      footer: {  }
+      footer:
+        area:
+          id: area
+          table: views
+          field: area
+          relationship: none
+          group_type: group
+          admin_label: ''
+          empty: false
+          tokenize: false
+          content:
+            value: "<div class=\"container\">\r\n  <div class=\"col-xs-12 text-center button-footer\">\r\n    <a href=\"/events\" class=\"see-all\"> See all the events </a>\r\n  </div>\r\n</div>"
+            format: full_html
+          plugin_id: text
       relationships: {  }
       fields:
         field_image_1:

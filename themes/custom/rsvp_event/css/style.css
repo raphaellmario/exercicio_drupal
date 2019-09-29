@@ -8,7 +8,7 @@ body {
   background-color: #333333;
 }
 
-.path-frontpage .footer {
+.path-frontpage .footer,.path-contactus .footer {
   position: fixed;
   width: 100%;
   bottom: 0px;
@@ -87,7 +87,7 @@ body {
   margin: 11px 0px;
 }
 
-.block-system-main-block .description p {
+.block-system-main-block .card .description p {
   font-size: 14px;
   color: #777777;
 }
@@ -98,6 +98,16 @@ body {
   padding-right: 25px;
   padding-bottom: 15px;
   color: #4EE49A;
+}
+
+.block-system-main-block .attenders div {
+  color: #4EE49A;
+}
+
+.block-system-main-block .attenders div a {
+  color: #4EE49A;
+  font-size: 14px;
+  text-decoration: none;
 }
 
 .block-system-main-block .read-more a {
@@ -136,7 +146,7 @@ body {
   line-height: 26px;
 }
 
-.block-system-main-block .view-header h2 {
+.block-system-main-block .view-header h2,.block-system-main-block .title-page h2 {
     margin-top: -10px;
 }
 
@@ -175,4 +185,100 @@ body {
 }
 .block-system-main-block .white{
   color: #eeeeee;
+}
+
+.block-system-main-block .card {
+    margin-bottom: 25px;
+}
+
+.view-footer .button-footer {
+  margin-top: 50px;
+}
+
+.view-footer a.see-all, .event-detail-page a.join {
+  border-radius: 10px;
+  padding: 13px 65px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background-color: #4ebd75;
+  font-family: roboto;
+}
+
+.events-page img {
+  max-height: 180px;
+}
+
+.event-detail-page img {
+  width: 100%;
+}
+
+.event-detail-page .button-join {
+  margin-top: 35px;
+}
+
+.events-page .description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-date{
+  padding-top: 27px;
+}
+
+.contact-form{
+  background: #fff;
+  margin-top: 10%;
+  margin-bottom: 5%;
+  width: 70%;
+}
+.contact-form .form-control{
+  border-radius:1rem;
+}
+.contact-image{
+    text-align: center;
+}
+.contact-image img{
+  border-radius: 6rem;
+  width: 11%;
+  margin-top: -3%;
+  transform: rotate(29deg);
+}
+.contact-form form{
+  padding: 10%;
+}
+.contact-form form .row{
+  margin-bottom: -7%;
+}
+.contact-form h3{
+  margin-bottom: 8%;
+  margin-top: -10%;
+  text-align: center;
+  color: #4ebd75;
+}
+.contact-form .btnContact {
+  width: 50%;
+  border: none;
+  border-radius: 1rem;
+  padding: 1.5%;
+  background: #4ebd75;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+.btnContactSubmit
+{
+  width: 50%;
+  border-radius: 1rem;
+  padding: 1.5%;
+  color: #fff;
+  background-color: #0062cc;
+  border: none;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 1000px) {
+  .button-contact {
+    margin-top: 50px;
+  }
 }
