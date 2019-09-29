@@ -1,0 +1,12 @@
+name: RSVP Event
+type: theme
+base theme: bootstrap
+description: 'A flexible, recolorable theme with many regions and a responsive, mobile-first layout.'
+core: 8.x
+libraries:
+  - 'rsvp_event/global-styling'
+  - 'rsvp_event/fonts'
+regions:
+  header: 'Header'
+  content: 'Content'
+  footer: 'Footer'
