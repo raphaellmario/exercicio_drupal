@@ -1,0 +1,22 @@
+uuid: 79fce404-11b6-4303-b0bd-ac8ebc630b03
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.attendee
+id: node.attendee.promote
+field_name: promote
+entity_type: node
+bundle: attendee
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean
