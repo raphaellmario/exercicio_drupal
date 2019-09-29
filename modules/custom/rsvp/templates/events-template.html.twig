@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 title-page text-center">
+      <h1>{{data.title|e}}</h1>
+      <h2>{{data.subtitle|e}}</h2>
+    </div>
+  </div>
+  <div class="events-page row">
+  {% for event in list %}
+    <div class="col-xs-12 col-sm-6 col-md-4 card">
+      <div class="content">
+        <div class="image"></div>
+        <div class="info row">
+          <div class="col-xs-3">
+            <div class="date">{{ event.date|e }}</div>
+          </div>
+          <div class="col-xs-9">
+            <div class="title"><a>{{ event.title|e }}</a></div>
+            <div class="description"><p>{{ event.description|e }}</p></div>
+            <div class="read-more">read more</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+</div>
