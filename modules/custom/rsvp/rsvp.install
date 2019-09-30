@@ -1,0 +1,19 @@
+<?php
+
+use Drupal\menu_link_content\Entity\MenuLinkContent;
+
+function admin_toolbar_update_8001() {
+  MenuLinkContent::create([
+    'title' => 'Events',
+    'link' => ['uri' => 'internal:/events'],
+    'menu_name' => 'main',
+    'weight' => -45,
+  ])->save();
+
+  MenuLinkContent::create([
+    'title' => 'Contact',
+    'link' => ['uri' => 'internal:/contact'],
+    'menu_name' => 'main',
+    'weight' => -45,
+  ])->save();
+}
