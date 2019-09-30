@@ -13,7 +13,6 @@ dependencies:
   module:
     - datetime
     - image
-    - simple_gmap
     - text
     - user
 id: node.event.default
@@ -58,20 +57,9 @@ content:
     weight: 3
     label: hidden
     settings:
-      include_map: true
-      apikey: ''
-      iframe_width: 100%
-      iframe_height: '200'
-      static_scale: 1
-      link_text: 'View larger map'
-      zoom_level: 14
-      map_type: m
-      langcode: en
-      include_static_map: false
-      include_link: false
-      include_text: false
+      link_to_entity: false
     third_party_settings: {  }
-    type: simple_gmap
+    type: string
     region: content
   field_rsvp_button:
     weight: 5
