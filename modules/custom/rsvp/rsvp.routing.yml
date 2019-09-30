@@ -1,0 +1,21 @@
+rsvp.overview:
+  path: '/events'
+  defaults:
+    _title: 'Events'
+    _controller: '\Drupal\rsvp\Controller\RsvpEventController::indexController'
+  requirements:
+    _permission: 'access content'
+rsvp.eventDetail:
+  path: '/event/{id}'
+  defaults:
+    _title: 'Event'
+    _controller: '\Drupal\rsvp\Controller\RsvpEventDetailController::indexController'
+  requirements:
+    _permission: 'access content'
+rsvp.contact:
+  path: '/contactus'
+  defaults:
+    _title: 'Event'
+    _controller: '\Drupal\rsvp\Controller\RsvpContactController::indexController'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,25 @@
+uuid: b9e8fceb-2efc-4d57-9d7e-9f6acc278ffd
+langcode: en
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:fa9c86cc-c581-4d33-b377-2f47b06ac0c6'
+  module:
+    - block_content
+  theme:
+    - rsvp_event
+id: contentfooter
+theme: rsvp_event
+region: footer
+weight: 0
+provider: null
+plugin: 'block_content:fa9c86cc-c581-4d33-b377-2f47b06ac0c6'
+settings:
+  id: 'block_content:fa9c86cc-c581-4d33-b377-2f47b06ac0c6'
+  label: 'Content Footer'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility: {  }

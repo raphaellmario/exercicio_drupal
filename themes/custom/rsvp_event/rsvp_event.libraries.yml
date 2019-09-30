@@ -1,0 +1,11 @@
+global-styling:
+  version: VERSION
+  css:
+    base:
+      css/style.css: {}
+  js:
+    js/customjs.js: {}
+  fonts:
+    css:
+      base:
+        '//fonts.googleapis.com/css?family=Roboto:300italic,400,300,700|Open+Sans:300italic,400,300': { type: external, minified: true }

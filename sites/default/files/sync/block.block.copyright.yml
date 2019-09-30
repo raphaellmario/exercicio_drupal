@@ -1,0 +1,25 @@
+uuid: e1b12c6d-b8e9-4e47-aab6-9b560149ada7
+langcode: en
+status: false
+dependencies:
+  content:
+    - 'block_content:basic:223b4c52-d8cf-47ee-bd4f-9bfc72603584'
+  module:
+    - block_content
+  theme:
+    - rsvp_event
+id: copyright
+theme: rsvp_event
+region: footer
+weight: 0
+provider: null
+plugin: 'block_content:223b4c52-d8cf-47ee-bd4f-9bfc72603584'
+settings:
+  id: 'block_content:223b4c52-d8cf-47ee-bd4f-9bfc72603584'
+  label: 'copy right'
+  provider: block_content
+  label_display: '0'
+  status: true
+  info: ''
+  view_mode: full
+visibility: {  }

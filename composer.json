@@ -9,7 +9,11 @@
         "drupal/core": "^8.6.0",
         "composer/composer": "^1.9",
         "drupal/adminimal_admin_toolbar": "^1.9",
-        "drupal/adminimal_theme": "^1.5"
+        "drupal/adminimal_theme": "^1.5",
+        "drupal/quick_node_clone": "^1.12",
+        "drupal/simple_gmap": "^1.4",
+        "drupal/bootstrap": "^3.20",
+        "drupal/fontawesome": "^2.14"
     },
     "require-dev": {
         "behat/mink": "1.7.x-dev",

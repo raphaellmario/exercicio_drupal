@@ -1,0 +1,284 @@
+body {
+  margin-top: 0;
+  min-height: 100vh;
+  font-family: 'Roboto';
+}
+
+.footer {
+  background-color: #333333;
+}
+
+.path-frontpage .footer,.path-contactus .footer {
+  position: fixed;
+  width: 100%;
+  bottom: 0px;
+}
+
+.footer .content-footer{
+  color:#ffffff;
+  font-size: 25px;
+  margin: 0px 100px;
+}
+
+.footer svg{
+  font-size: 30px;
+  margin: 0px 15px;
+}
+
+.footer .copyright{
+  font-size: 18px;
+}
+
+.menu-desktop .menu {
+  float: right;
+}
+.menu-desktop a {
+  font-size: 17px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.menu-desktop .nav > li > a:hover {
+  color: #333333;
+  background-color: #2cbc75;
+}
+.menu-desktop .nav li .is-active {
+  color: #333333;
+}
+
+.menu-desktop {
+  background-color: #2cbc75;
+  padding: 15px;
+}
+
+.block-system-main-block ul {
+  list-style-type: none;
+}
+
+.block-system-main-block li {
+  margin-left: -20px;
+}
+
+.block-system-main-block .content {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 0;
+  overflow: hidden;
+  min-height: 385px;
+}
+
+.block-system-main-block .title{
+  line-height: 26px;
+  margin: 11px 0px;
+}
+
+.block-system-main-block .title a {
+  font-size: 20px;
+  color: #333333;
+  font-weight: bold;
+}
+
+.block-system-main-block .title-page {
+    margin-bottom: 55px;
+}
+
+.block-system-main-block .description{
+  line-height: 18px;
+  margin: 11px 0px;
+}
+
+.block-system-main-block .card .description p {
+  font-size: 14px;
+  color: #777777;
+}
+
+.block-system-main-block .read-more {
+  font-size: 14px;
+  float: right;
+  padding-right: 25px;
+  padding-bottom: 15px;
+  color: #4EE49A;
+}
+
+.block-system-main-block .attenders div {
+  color: #4EE49A;
+}
+
+.block-system-main-block .attenders div a {
+  color: #4EE49A;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.block-system-main-block .read-more a {
+  font-size: 14px;
+  color: #4EE49A;
+}
+
+.block-system-main-block .date {
+    border-right: 1px solid #dddddd;
+    height: 140px;
+    padding: 50% 15%;
+    margin-top: 13px;
+}
+
+.block-system-main-block .day {
+  color: #333333;
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.block-system-main-block .month {
+  font-size: 18px;
+  color: #777777;
+  padding-left: 8px;
+}
+
+
+.block-system-main-block h1 {
+  font-size: 40px;
+  line-height: 52px;
+  font-weight: bold;
+}
+
+.block-system-main-block h2 {
+  font-size: 20px;
+  line-height: 26px;
+}
+
+.block-system-main-block .view-header h2,.block-system-main-block .title-page h2 {
+    margin-top: -10px;
+}
+
+.block-system-main-block h3 {
+  font-size: 18px;
+  line-height: 23px;
+}
+
+.block-system-main-block .text1 {
+  font-size: 18px;
+  line-height: 23px;
+}
+
+.block-system-main-block .text2 {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.block-system-main-block .gree{
+  color: #2cbc75;
+}
+.block-system-main-block .light-gree{
+  color: #4EE49A;
+}
+.block-system-main-block .black{
+  color: #333333;
+}
+.block-system-main-block .gray{
+  color: #777777;
+}
+.block-system-main-block .middle-gray{
+  color: #999999;
+}
+.block-system-main-block .light-gray{
+  color: #dddddd;
+}
+.block-system-main-block .white{
+  color: #eeeeee;
+}
+
+.block-system-main-block .card {
+    margin-bottom: 25px;
+}
+
+.view-footer .button-footer {
+  margin-top: 50px;
+}
+
+.view-footer a.see-all, .event-detail-page a.join {
+  border-radius: 10px;
+  padding: 13px 65px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background-color: #4ebd75;
+  font-family: roboto;
+}
+
+.events-page img {
+  max-height: 180px;
+}
+
+.event-detail-page img {
+  width: 100%;
+}
+
+.event-detail-page .button-join {
+  margin-top: 35px;
+}
+
+.events-page .description {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-date{
+  padding-top: 27px;
+}
+
+.contact-form{
+  background: #fff;
+  margin-top: 10%;
+  margin-bottom: 5%;
+  width: 70%;
+}
+.contact-form .form-control{
+  border-radius:1rem;
+}
+.contact-image{
+    text-align: center;
+}
+.contact-image img{
+  border-radius: 6rem;
+  width: 11%;
+  margin-top: -3%;
+  transform: rotate(29deg);
+}
+.contact-form form{
+  padding: 10%;
+}
+.contact-form form .row{
+  margin-bottom: -7%;
+}
+.contact-form h3{
+  margin-bottom: 8%;
+  margin-top: -10%;
+  text-align: center;
+  color: #4ebd75;
+}
+.contact-form .btnContact {
+  width: 50%;
+  border: none;
+  border-radius: 1rem;
+  padding: 1.5%;
+  background: #4ebd75;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+.btnContactSubmit
+{
+  width: 50%;
+  border-radius: 1rem;
+  padding: 1.5%;
+  color: #fff;
+  background-color: #0062cc;
+  border: none;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 1000px) {
+  .button-contact {
+    margin-top: 50px;
+  }
+}

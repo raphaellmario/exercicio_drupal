@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Rsvp Event module.
+ */
+
+/**
+ * Implements hook_theme().
+ */
+function rsvp_theme($existing, $type, $theme, $path) {
+  return [
+    'event_detail_template' => [
+      'variables' => ['list' => NULL, 'data' => NULL],
+    ],
+    'events_template' => [
+      'variables' => ['list' => NULL, 'data' => NULL],
+    ],
+    'contact_template' => [
+      'variables' => ['list' => NULL, 'data' => NULL],
+    ]
+  ];
+}

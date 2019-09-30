@@ -1,0 +1,5 @@
+name: RSVP Event
+description: 'Rsvp Event Module'
+package: Rsvp
+type: module
+core: 8.x

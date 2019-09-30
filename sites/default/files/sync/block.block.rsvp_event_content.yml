@@ -1,0 +1,22 @@
+uuid: 00c0bde9-4761-4cbc-99e9-414a6b9460b6
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - rsvp_event
+_core:
+  default_config_hash: 9EoWV2Lot6FVSr50t4hoKgiz1LIXYWNG-IIPYsWxBqo
+id: rsvp_event_content
+theme: rsvp_event
+region: content
+weight: -3
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Main page content'
+  provider: system
+  label_display: '0'
+visibility: {  }

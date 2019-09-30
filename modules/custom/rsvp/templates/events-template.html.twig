@@ -1,0 +1,26 @@
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 title-page text-center">
+      <h1>{{data.title|e}}</h1>
+    </div>
+  </div>
+  <div class="events-page row">
+  {% for event in list %}
+    <div class="col-xs-12 col-sm-6 col-md-4 card">
+      <div class="content">
+        <div class="image"><img src="{{ file_url(event.image) }}" alt=""></div>
+        <div class="info row">
+          <div class="col-xs-3">
+            <div class="date">{{ event.date|raw }}</div>
+          </div>
+          <div class="col-xs-9">
+            <div class="title"><a href="/node/{{event.id}}">{{ event.title|e }}</a></div>
+            <div class="description"><p>{{ event.description|raw }}</p></div>
+            <div class="read-more"><a href="/event/{{event.id}}">READ MORE</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+  </div>
+</div>

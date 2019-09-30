@@ -1,0 +1,35 @@
+uuid: ae681058-1c24-4ece-99e5-861f563febe2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.attendee.field_description
+    - field.field.node.attendee.field_image
+    - node.type.attendee
+  module:
+    - image
+    - text
+    - user
+id: node.attendee.default
+targetEntityType: node
+bundle: attendee
+mode: default
+content:
+  field_description:
+    weight: 1
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    type: text_default
+    region: content
+  field_image:
+    weight: 0
+    label: hidden
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+    type: image
+    region: content
+hidden:
+  links: true
